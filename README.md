@@ -1,4 +1,4 @@
-## Lokaverkeni í HBV602G
+## Lokaverkeni í HBV601G
 - Ásgerður Júlía
 - Freydís Xuan
 - Hermann Ingi
