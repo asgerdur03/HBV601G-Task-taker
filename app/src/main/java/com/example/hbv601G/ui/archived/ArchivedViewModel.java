@@ -1,16 +1,15 @@
-package com.example.hbv601G.ui.home;
+package com.example.hbv601G.ui.archived;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
-
+public class ArchivedViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public ArchivedViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment, here will we display tasks and the filters for them");
+        mText.setValue("This is archived fragment");
     }
 
     public LiveData<String> getText() {

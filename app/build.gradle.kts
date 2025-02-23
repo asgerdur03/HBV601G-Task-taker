@@ -1,3 +1,5 @@
+import com.google.gson.Gson
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -43,7 +45,12 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.activity)
+    implementation(libs.annotation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.google.code.gson:gson:2.12.1")
+
+
 }

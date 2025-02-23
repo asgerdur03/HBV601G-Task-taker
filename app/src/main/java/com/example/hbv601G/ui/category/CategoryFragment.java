@@ -1,4 +1,4 @@
-package com.example.hbv601G.ui.notifications;
+package com.example.hbv601G.ui.category;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.hbv601G.databinding.FragmentNotificationsBinding;
+import com.example.hbv601G.databinding.FragmentCategoryBinding;
 
-public class NotificationsFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+public class CategoryFragment extends Fragment {
+
+    private FragmentCategoryBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        CategoryViewModel dashboardViewModel =
+                new ViewModelProvider(this).get(CategoryViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentCategoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textDashboard;
+        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
