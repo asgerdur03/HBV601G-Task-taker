@@ -46,6 +46,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void loginUser(){
+        // TODO replace mock with api call
         String email = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 

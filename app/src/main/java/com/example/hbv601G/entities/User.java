@@ -8,6 +8,16 @@ public class User {
 
     // meira seinna, tengar og sfr.
 
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public User(){}
 
     public User(String username, String password){
