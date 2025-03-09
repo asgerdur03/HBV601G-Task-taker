@@ -11,10 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.hbv601G.R;
 import com.example.hbv601G.databinding.FragmentArchivedBinding;
-import com.example.hbv601G.databinding.FragmentCategoryBinding;
-import com.example.hbv601G.ui.category.CategoryViewModel;
 
 public class ArchivedFragment extends Fragment {
 
@@ -22,14 +19,10 @@ public class ArchivedFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ArchivedViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(ArchivedViewModel.class);
 
         binding = FragmentArchivedBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textArchived;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
