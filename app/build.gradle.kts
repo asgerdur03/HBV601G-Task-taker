@@ -51,6 +51,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.code.gson:gson:2.12.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 
 }
