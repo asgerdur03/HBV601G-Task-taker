@@ -2,6 +2,7 @@ package com.example.hbv601G;
 
 import android.os.Bundle;
 import android.widget.Toast;
+import android.widget.PopupMenu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -38,11 +39,22 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        // nytt task popup
         FloatingActionButton fab = findViewById(R.id.new_task);
+        fab.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
+            popupMenu.getMenu().add("Create a new task");
 
-        fab.setOnClickListener(v ->
-                        Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getTitle().equals("Create a new task")) {
+                    navController.navigate(R.id.navigation_new_task);
+                    return true;
+                }
+                return false;
+            });
 
+            popupMenu.show();
+        });
                /* {
             navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
                     .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
@@ -51,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                     .build());
 
         }*/
-
 
 
 

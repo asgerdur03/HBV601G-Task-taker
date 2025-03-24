@@ -29,14 +29,12 @@
         android:label="@string/title_archived"
         tools:layout="@layout/fragment_archived" />
 
-    <!--
     <fragment
         android:id="@+id/navigation_new_task"
         android:name="com.example.hbv601G.ui.tasks.NewTaskFragment"
         android:label="New Task"
         tools:layout="@layout/fragment_new_task" />
 
--->
     <!-- bæta við seinna ig
     <fragment
         android:id="@+id/loginFragment"
