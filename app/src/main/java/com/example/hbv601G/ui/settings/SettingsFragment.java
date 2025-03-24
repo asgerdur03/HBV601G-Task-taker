@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -32,6 +33,27 @@ public class SettingsFragment extends Fragment {
 
         logoutButton = binding.logoutButton;
         logoutButton.setOnClickListener(v-> logoutUser());
+        //nýtt og fallegt
+        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        String currentUsername = prefs.getString("user_email", "");
+        String currentPassword = prefs.getString("user_password", "");
+
+        binding.editUsername.setText(currentUsername);
+        binding.editPassword.setText(currentPassword);
+
+        binding.updateButton.setOnClickListener(v -> {
+            String newUsername = binding.editUsername.getText().toString().trim();
+            String newPassword = binding.editPassword.getText().toString().trim();
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("user_email", newUsername);
+            editor.putString("user_password", newPassword);
+            editor.apply();
+
+            Toast.makeText(getContext(), "Upplýsingar uppfærðar!", Toast.LENGTH_SHORT).show();
+        });
+
+
 
         return root;
     }
@@ -40,7 +62,8 @@ public class SettingsFragment extends Fragment {
         // Should remove token and redirect to login page
         SharedPreferences preferences = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
+        //editor.clear();
+        editor.remove("jwt_token");
         editor.apply();
 
         Intent intent = new Intent(getActivity(), AuthActivity.class);
