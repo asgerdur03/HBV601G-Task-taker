@@ -3,6 +3,7 @@ package com.example.hbv601G;
 import android.os.Bundle;
 import android.widget.Toast;
 import android.widget.PopupMenu;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -39,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.navigation_new_task) {
+                binding.navView.setVisibility(View.GONE); // ef new task ting, fela nav
+            } else {
+                binding.navView.setVisibility(View.VISIBLE); // almenna syna nav
+            }
+        });
         // nytt task popup
         FloatingActionButton fab = findViewById(R.id.new_task);
         fab.setOnClickListener(v -> {
