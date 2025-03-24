@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 binding.navView.setVisibility(View.VISIBLE); // almenna syna nav
             }
         });
+
+
         // nytt task popup
         FloatingActionButton fab = findViewById(R.id.new_task);
         fab.setOnClickListener(v -> {
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
             popupMenu.show();
         });
+
+
                /* {
             navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
                     .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
@@ -81,8 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-
+    // back arrow virkni ?
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        return navController.navigateUp() || super.onSupportNavigateUp();
+    }
 
 }
+
+
+
