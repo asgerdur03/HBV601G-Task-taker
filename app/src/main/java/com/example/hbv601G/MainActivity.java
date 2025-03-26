@@ -41,24 +41,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.new_task);
 
         fab.setOnClickListener(v ->
-                        Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
-
-               /* {
-            navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
-                    .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
-                    .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
-                    .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
-                    .build());
-
-        }*/
-
-
-
-
-
-
-
-
+                Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
 
     }
 
