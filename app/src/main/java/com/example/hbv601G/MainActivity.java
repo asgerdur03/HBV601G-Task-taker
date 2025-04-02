@@ -5,6 +5,7 @@ import android.widget.Toast;
 import android.widget.PopupMenu;
 import android.view.View;
 
+import com.example.hbv601G.data.DummyGognVinnsla;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DummyGognVinnsla.loadData(this); // TEMP skjal pre api, losa umbreyta þegar all good?
+
+
+        DummyGognVinnsla.loadData(getApplicationContext()); // hlaða inn dummy
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
