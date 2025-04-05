@@ -51,12 +51,23 @@ public class LoginFragment extends Fragment {
         String password = passwordInput.getText().toString().trim();
 
         // mock login
-        if (email.equals("demo") && password.equals("demo")){
+        //if (email.equals("demo") && password.equals("demo")){
+            //saveToken("token");
+            //startActivity(new Intent(getActivity(), MainActivity.class));
+            //getActivity().finish();
+        //}else{
+            //Toast.makeText(getActivity(), "Invalid login", Toast.LENGTH_SHORT).show();
+        //}
+        //vonandi ekki mock login
+        SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        String savedEmail = prefs.getString("user_email", "demo");
+        String savedPassword = prefs.getString("user_password", "demo");
+        if (email.equals(savedEmail) && password.equals(savedPassword)) {
             saveToken("token");
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
-        }else{
-            Toast.makeText(getActivity(), "Invalid login", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Rangt notandanafn eða lykilorð", Toast.LENGTH_SHORT).show();
         }
 
 

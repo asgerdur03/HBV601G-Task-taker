@@ -2,7 +2,10 @@ package com.example.hbv601G;
 
 import android.os.Bundle;
 import android.widget.Toast;
+import android.widget.PopupMenu;
+import android.view.View;
 
+import com.example.hbv601G.data.DummyGognVinnsla;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,7 +44,24 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.new_task);
 
         fab.setOnClickListener(v ->
-                Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
+                        Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
+
+               /* {
+            navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
+                    .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
+                    .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
+                    .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
+                    .build());
+
+        }*/
+
+
+
+
+
+
+
+
 
     }
 
