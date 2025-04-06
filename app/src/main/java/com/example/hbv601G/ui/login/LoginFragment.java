@@ -19,6 +19,13 @@ import android.widget.Toast;
 import com.example.hbv601G.AuthActivity;
 import com.example.hbv601G.MainActivity;
 import com.example.hbv601G.R;
+import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.services.UserService;
+import com.google.gson.JsonObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
 
@@ -47,29 +54,54 @@ public class LoginFragment extends Fragment {
 
     private void loginUser(){
         // TODO replace mock with api call
-        String email = usernameInput.getText().toString().trim();
+        String username = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
-        // mock login
-        //if (email.equals("demo") && password.equals("demo")){
-            //saveToken("token");
-            //startActivity(new Intent(getActivity(), MainActivity.class));
-            //getActivity().finish();
-        //}else{
-            //Toast.makeText(getActivity(), "Invalid login", Toast.LENGTH_SHORT).show();
-        //}
-        //vonandi ekki mock login
+        UserService userService = NetworkingService.getRetrofitInstance().create(UserService.class);
+
+        userService.login(username, password).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    JsonObject jsonObject = response.body();
+
+                    String token = jsonObject.get("token").getAsString();
+                    JsonObject user = jsonObject.getAsJsonObject("user");
+                    String username = user.get("username").getAsString();
+
+                    Log.d("Login", "Token: " + token);
+                    Log.d("Login", "User: " + username);
+                    // TODO: Save the token, so i can call the locked routes, else the redirect is enough
+
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    getActivity().finish();
+                }
+                else{
+                    Log.e("Login", "failed: " + response.code());
+                    Toast.makeText(getActivity(), "invalid login", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                Log.e("Login", "failed: " + t.getMessage());
+
+            }
+        });
+
+       /*
         SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
         String savedEmail = prefs.getString("user_email", "demo");
-        String savedPassword = prefs.getString("user_password", "demo");
+        String savedPassword = prefs.getString("user_password", "demho");
         if (email.equals(savedEmail) && password.equals(savedPassword)) {
             saveToken("token");
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
         } else {
             Toast.makeText(getActivity(), "Rangt notandanafn eða lykilorð", Toast.LENGTH_SHORT).show();
-        }
-
+        }*/
 
     }
 

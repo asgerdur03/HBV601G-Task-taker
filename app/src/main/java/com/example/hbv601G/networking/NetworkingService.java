@@ -12,18 +12,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class NetworkingService{
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "https://hugbo-1-api.onrender.com";
     private static Retrofit retrofit;
+
+
 
     public static Retrofit getRetrofitInstance(){
         if (retrofit == null){
+            // TODO: Add AuthInterpretor
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
+
     }
+
 
 
 

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,15 @@ import android.widget.Toast;
 
 import com.example.hbv601G.AuthActivity;
 import com.example.hbv601G.R;
+import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.services.UserService;
+import com.google.gson.JsonObject;
 
 import org.w3c.dom.Text;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SignupFragment extends Fragment {
@@ -52,19 +60,34 @@ public class SignupFragment extends Fragment {
         String password = passwordInput.getText().toString().trim();
 
         // TODO: make api call that creates new user, and then redirects to login
+        UserService api = NetworkingService.getRetrofitInstance().create(UserService.class);
 
-        // mock
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(getActivity(), "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (username.equals("demo")) {
-            Toast.makeText(getActivity(), "Username already in use", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(), "Signup successful! Please log in.", Toast.LENGTH_SHORT).show();
-            authActivity.switchToLogin(); // Redirect to login
-        }
+
+        api.signup(username, email, password).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(getActivity(), "Signup successful! Please log in.", Toast.LENGTH_SHORT).show();
+                    authActivity.switchToLogin(); // Redirect to login if successful
+
+                } else {
+                    Log.e("Signup", "Failed: " + response.code());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.e("Signup", "Error: " + t.getMessage());
+
+            }
+        });
+
     }
 
 

@@ -70,7 +70,7 @@ public class TaskDetailFragment extends Fragment {
         deleteButton.setOnClickListener(v -> {
             DummyGognVinnsla.deleteTask(currentTask.id, requireContext());
             Toast.makeText(getContext(), "Task deleted", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
+            requireActivity().getOnBackPressedDispatcher();
         });
     }
 }
