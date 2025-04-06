@@ -9,9 +9,3 @@ Task manager application
 
 Final project in HBV601G - Software project 2
 
-
-## TODO
-- [ ] Laga API frá síðustu önn
-- [ ] Implementa entities, taka úr gamla forriti sirkabout
-- [ ] Tengjast við database, nota postgres?
-- [x] Create task takki virkni (ekki hægt að gera task atm þvi mock stage)

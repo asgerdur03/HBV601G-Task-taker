@@ -25,10 +25,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DummyGognVinnsla.loadData(this); // TEMP skjal pre api, losa umbreyta þegar all good?
-
-
-        DummyGognVinnsla.loadData(getApplicationContext()); // hlaða inn dummy
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -45,32 +41,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.navigation_new_task) {
-                binding.navView.setVisibility(View.GONE); // ef new task ting, fela nav
-            } else {
-                binding.navView.setVisibility(View.VISIBLE); // almenna syna nav
-            }
-        });
-
-
-        // nytt task popup
         FloatingActionButton fab = findViewById(R.id.new_task);
-        fab.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
-            popupMenu.getMenu().add("Create a new task");
 
-            popupMenu.setOnMenuItemClickListener(item -> {
-                if (item.getTitle().equals("Create a new task")) {
-                    navController.navigate(R.id.navigation_new_task);
-                    return true;
-                }
-                return false;
-            });
-
-            popupMenu.show();
-        });
-
+        fab.setOnClickListener(v ->
+                        Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
 
                /* {
             navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
@@ -88,16 +62,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     }
 
-    // back arrow virkni ?
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        return navController.navigateUp() || super.onSupportNavigateUp();
-    }
+
+
+
 
 }
-
-
-
