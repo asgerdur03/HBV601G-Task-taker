@@ -53,7 +53,6 @@ public class LoginFragment extends Fragment {
     }
 
     private void loginUser(){
-        // TODO replace mock with api call
         String username = usernameInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
@@ -80,14 +79,11 @@ public class LoginFragment extends Fragment {
                     Log.e("Login", "failed: " + response.code());
                     Toast.makeText(getActivity(), "invalid login", Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-
                 Log.e("Login", "failed: " + t.getMessage());
-
             }
         });
 
