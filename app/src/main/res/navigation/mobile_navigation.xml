@@ -29,6 +29,12 @@
         android:label="@string/title_archived"
         tools:layout="@layout/fragment_archived" />
 
+    <fragment
+        android:id="@+id/navigation_newTask"
+        android:name="com.example.hbv601G.ui.tasks.NewTaskFragment"
+        android:label="New Task"
+        tools:layout="@layout/fragment_new_task" />
+
 
     <!--
     <fragment

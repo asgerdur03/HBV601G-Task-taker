@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class NetworkingService {
-    private static final String BASE_URL = "https://hugbo-1-api.onrender.com";
+    private static final String BASE_URL = "https://hugbo-1-api.onrender.com/";
     private static Retrofit retrofit;
     private static Retrofit retrofitAuth;
 

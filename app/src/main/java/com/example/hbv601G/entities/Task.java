@@ -1,17 +1,19 @@
 package com.example.hbv601G.entities;
 
-import java.time.LocalDate;
+import androidx.annotation.NonNull;
 
 public class Task {
 
     private long id;
     private String taskName;
     private String taskNote;
-    private TaskStatus taskStatus;
-    private TaskPriority taskPriority;
+    private String status;
+    private String priority;
     private String dueDate;
     private Boolean favorite = false;
     private Boolean archived = false;
+
+    private long categoryId;
 
     // annað
 
@@ -23,13 +25,16 @@ public class Task {
         this.taskNote = taskNote;
     }
 
-    public Task(String taskName, String taskNote, TaskStatus taskStatus, TaskPriority taskPriority, String dueDate) {
+    public Task(String taskName, String taskNote, String taskStatus, String taskPriority, String dueDate, long categoryId) {
         this.taskName = taskName;
         this.taskNote = taskNote;
-        this.taskStatus = taskStatus;
-        this.taskPriority = taskPriority;
+        this.status = taskStatus;
+        this.priority = taskPriority;
         this.dueDate = dueDate;
+        this.categoryId = categoryId;
     }
+
+
 
     public long getId() {
         return id;
@@ -55,20 +60,20 @@ public class Task {
         this.taskNote = taskNote;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public TaskPriority getTaskPriority() {
-        return taskPriority;
+    public String getPriority() {
+        return priority;
     }
 
-    public void setTaskPriority(TaskPriority taskPriority) {
-        this.taskPriority = taskPriority;
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 
     public String getDueDate() {
@@ -109,5 +114,17 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @NonNull
+    @Override
+    public String toString(){
+        return "Task: " +
+                getTaskName() + " " +
+                getTaskNote()+ " " +
+                getPriority() + " " +
+                getStatus() + " " +
+                getDueDate();
+
     }
 }
