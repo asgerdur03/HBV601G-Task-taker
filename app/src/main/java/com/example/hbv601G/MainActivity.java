@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.new_task);
 
+        // todo: make onCLick, redirect to new task tab
         fab.setOnClickListener(v ->
                         Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
 

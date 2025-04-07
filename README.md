@@ -12,15 +12,19 @@ Final project in HBV601G - Software project 2
 ## TODO 
 Routes to implements, by priority:
 
-1. GET tasks
-2. POST tasks
-3. DELETE tasks
-4. GET Categories
-5. POST Categories
-6. DELETE Categories
-7. PATCH allt
-8. PUT allt
+- DELETE tasks
+- PATCH allt
+- PUT allt
 
-Archived og öll atribute er hægt að implementa með localstorege, svo geyma það til síðast
-CREATE og DELETE er must, PATCH er extra
+### TODO user stories, og hvernig uppfyllum við það:
+
+- [ ] Edit task: nota `PATCH /tasks/{id}`, autofill fields sem er ekki breytt. 
+Uppfyllir einnig *Track progress* og *Set Reminder*. 
+- [ ] Upload profile picture: `POST /upload-pic` í settings, mobile specific, birta mynd í horni?
+- [ ] Offline accessibility: Get tasks, drita í sqlite database, (ef ekkert net, fetcha þaðan)
+- [ ] Pomodoro: nope (ef við höfum tíma)
+- [ ] Archive/Favorites: OnButtonclick, kalla á viðeigandi route, reload. 
+- [ ] Filter tasks: Svipað, onButtonClick, kalla á api með filter skilyrðum
+
+
 

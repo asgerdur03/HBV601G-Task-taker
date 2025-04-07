@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hbv601G.R;
-import com.example.hbv601G.data.DummyGognVinnsla;
 import com.example.hbv601G.entities.Task;
 
 import java.util.List;
@@ -42,10 +41,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.taskNote.setText(task.getTaskNote());
         holder.status.setText(
-                task.getTaskStatus() != null ? task.getTaskStatus().toString() : "No status"
+                task.getStatus() != null ? task.getStatus().toString() : "No status"
         );
         holder.priority.setText(
-                task.getTaskPriority() != null ? task.getTaskPriority().toString() : "No priority"
+                task.getPriority() != null ? task.getPriority().toString() : "No priority"
         );
 
     }

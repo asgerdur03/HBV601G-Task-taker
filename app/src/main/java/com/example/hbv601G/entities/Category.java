@@ -1,12 +1,14 @@
 package com.example.hbv601G.entities;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
     private long id;
     private String categoryName;
-    private String categoryColor;
+    private String color;
 
     // ekki viss með eftirfarandi
 
@@ -16,13 +18,19 @@ public class Category {
 
     public Category(String categoryName, String categoryColor){
         this.categoryName=categoryName;
-        this.categoryColor=categoryColor;
+        this.color=categoryColor;
     }
 
     public Category(User user, String categoryName, String categoryColor) {
         this.user = user;
         this.categoryName = categoryName;
-        this.categoryColor = categoryColor;
+        this.color = categoryColor;
+    }
+
+    public Category(long id, String categoryName, String color) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.color = color;
     }
 
     public long getId() {
@@ -42,11 +50,11 @@ public class Category {
     }
 
     public String getCategoryColor() {
-        return categoryColor;
+        return color;
     }
 
     public void setCategoryColor(String categoryColor) {
-        this.categoryColor = categoryColor;
+        this.color = categoryColor;
     }
 
     public User getUser() {
@@ -63,5 +71,12 @@ public class Category {
 
     public void setTask(List<Task> task) {
         this.task = task;
+    }
+
+    @NonNull
+    @Override
+    public String toString(){
+        return "Category: " + getCategoryName() + " " + getUser().getUsername() + " " + getCategoryColor() + " " + getId();
+
     }
 }
