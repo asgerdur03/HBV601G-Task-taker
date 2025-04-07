@@ -59,7 +59,6 @@ public class SignupFragment extends Fragment {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
-        // TODO: make api call that creates new user, and then redirects to login
         UserService api = NetworkingService.getRetrofitInstance().create(UserService.class);
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -76,6 +75,7 @@ public class SignupFragment extends Fragment {
                     authActivity.switchToLogin(); // Redirect to login if successful
 
                 } else {
+                    // todo: Add toast on failure
                     Log.e("Signup", "Failed: " + response.code());
                 }
 
