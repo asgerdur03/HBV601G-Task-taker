@@ -20,6 +20,7 @@ import com.example.hbv601G.AuthActivity;
 import com.example.hbv601G.MainActivity;
 import com.example.hbv601G.R;
 import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.networking.TokenManager;
 import com.example.hbv601G.services.UserService;
 import com.google.gson.JsonObject;
 
@@ -68,9 +69,14 @@ public class LoginFragment extends Fragment {
                     JsonObject user = jsonObject.getAsJsonObject("user");
                     String username = user.get("username").getAsString();
 
-                    Log.d("Login", "Token: " + token);
                     Log.d("Login", "User: " + username);
                     // TODO: Save the token, so i can call the locked routes, else the redirect is enough
+
+                    TokenManager tokenManager = new TokenManager(requireContext());
+                    tokenManager.saveToken(token);
+
+                    Log.d("TokenTest", "Saved token: " + tokenManager.getToken());
+
 
                     startActivity(new Intent(getActivity(), MainActivity.class));
                     getActivity().finish();

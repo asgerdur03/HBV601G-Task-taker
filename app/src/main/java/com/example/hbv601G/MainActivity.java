@@ -52,16 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
                     .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
                     .build());
-
         }*/
-
-
-
-
-
-
-
-
 
     }
 

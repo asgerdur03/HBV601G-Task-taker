@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,13 +16,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.hbv601G.databinding.FragmentArchivedBinding;
+import com.example.hbv601G.entities.Task;
 import com.example.hbv601G.entities.User;
 import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.services.TaskService;
 import com.example.hbv601G.services.UserService;
+import com.example.hbv601G.ui.home.TaskAdapter;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -31,10 +38,10 @@ import retrofit2.Retrofit;
 public class ArchivedFragment extends Fragment {
 
     private FragmentArchivedBinding binding;
-    private TextView textView;
+    private RecyclerView recyclerView;
+    private TaskAdapter taskAdapter;
 
-    @Nullable
-    @Override
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -44,7 +51,50 @@ public class ArchivedFragment extends Fragment {
         // TODO: remove, Add actual call to Archived
         loadAdmin();
 
+        recyclerView = binding.recyclerViewTasks;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        taskAdapter = new TaskAdapter(new ArrayList<>());
+        recyclerView.setAdapter(taskAdapter);
+
+        fetchTasks();
+
         return root;
+    }
+
+    private void fetchTasks(){
+        TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
+        taskService.getArchived().enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null){
+                    JsonObject json = response.body();
+
+                    JsonArray taskArray = json.getAsJsonArray("archivedTasks");
+
+                    List<Task> tasks = new ArrayList<>();
+
+                    for (JsonElement element: taskArray){
+                        Task task = new Gson().fromJson(element, Task.class);
+                        tasks.add(task);
+                    }
+
+                    Log.d("ArchivedTaskDebug", "size: " + tasks.size());
+
+                    taskAdapter.updateTasks(tasks);
+
+                }else{
+                    Log.e("ArchivedTasks", "Failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+
+            }
+        });
+
     }
 
     private void loadAdmin(){
