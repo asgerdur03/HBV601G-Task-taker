@@ -22,11 +22,23 @@ import com.example.hbv601G.R;
 import com.example.hbv601G.networking.NetworkingService;
 import com.example.hbv601G.networking.TokenManager;
 import com.example.hbv601G.services.UserService;
+import com.example.hbv601G.services.TaskService;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import com.example.hbv601G.data.local.AppDatabase;
+import com.example.hbv601G.data.local.UserDao;
+import com.example.hbv601G.data.local.TaskDao;
+import com.example.hbv601G.entities.User;
+import com.example.hbv601G.entities.Task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginFragment extends Fragment {
 
@@ -34,7 +46,8 @@ public class LoginFragment extends Fragment {
     private Button loginButton;
     private TextView goToSignup;
     private AuthActivity authActivity;
-
+    private UserDao userDao;
+    private TaskDao taskDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInctenceState){
@@ -42,10 +55,13 @@ public class LoginFragment extends Fragment {
 
         usernameInput = view.findViewById(R.id.usernameInput);
         passwordInput = view.findViewById(R.id.passwordInput);
-        loginButton =view.findViewById(R.id.loginButton);
+        loginButton = view.findViewById(R.id.loginButton);
         goToSignup = view.findViewById(R.id.goToSignup);
 
         authActivity = (AuthActivity) getActivity();
+        AppDatabase db = authActivity.getDatabase();
+        userDao = db.userDao();
+        taskDao = db.taskDao();
 
         loginButton.setOnClickListener(v -> loginUser());
         goToSignup.setOnClickListener(v -> authActivity.switchToSignup());
@@ -66,22 +82,67 @@ public class LoginFragment extends Fragment {
                     JsonObject jsonObject = response.body();
 
                     String token = jsonObject.get("token").getAsString();
-                    JsonObject user = jsonObject.getAsJsonObject("user");
-                    String username = user.get("username").getAsString();
+                    JsonObject userJson = jsonObject.getAsJsonObject("user");
+                    String usernameFromJson = userJson.get("username").getAsString();
 
-                    Log.d("Login", "User: " + username);
-                    // TODO: Save the token, so i can call the locked routes, else the redirect is enough
+                    User user = new User();
+                    user.setId(userJson.get("id").getAsInt());
+                    user.setUsername(userJson.get("username").getAsString());
+                    user.setPassword(password);
+                    user.setGmail(userJson.get("gmail").getAsString());
+                    user.setProfilePicture(userJson.has("profilePicture") && !userJson.get("profilePicture").isJsonNull()
+                            ? userJson.get("profilePicture").getAsString() : null);
+                    user.setEnabled(userJson.get("enabled").getAsBoolean());
+
+                    userDao.insertUser(user);
+
+                    Log.d("Login", "User: " + usernameFromJson);
 
                     TokenManager tokenManager = new TokenManager(requireContext());
                     tokenManager.saveToken(token);
-
                     Log.d("TokenTest", "Saved token: " + tokenManager.getToken());
 
+                    TaskService taskService = NetworkingService.getRetrofitInstance().create(TaskService.class);
 
-                    startActivity(new Intent(getActivity(), MainActivity.class));
-                    getActivity().finish();
-                }
-                else{
+                    taskService.getTasks().enqueue(new Callback<JsonObject>() {
+                        @Override
+                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                JsonArray taskArray = response.body().getAsJsonArray();
+
+                                if (taskArray != null) {
+                                    List<Task> tasksToSave = new ArrayList<>();
+
+                                    for (JsonElement element : taskArray) {
+                                        JsonObject taskObj = element.getAsJsonObject();
+                                        Task task = new Task();
+                                        task.setId(taskObj.get("id").getAsInt());
+                                        task.setTitle(taskObj.get("title").getAsString());
+                                        task.setDescription(taskObj.get("description").getAsString());
+                                        task.setDueDate(taskObj.get("dueDate").getAsString());
+                                        task.setCompleted(taskObj.get("completed").getAsBoolean());
+                                        task.setUserId(user.getId());
+                                        tasksToSave.add(task);
+                                    }
+
+                                    taskDao.deleteTasksForUser(user.getId());
+                                    taskDao.insertAll(tasksToSave);
+
+                                    Log.d("Login", "Tasks saved: " + tasksToSave.size());
+                                }
+                            }
+                            startActivity(new Intent(getActivity(), MainActivity.class));
+                            requireActivity().finish();
+                        }
+
+                        @Override
+                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                            Log.e("Login", "Failed to fetch tasks: " + t.getMessage());
+                            startActivity(new Intent(getActivity(), MainActivity.class));
+                            requireActivity().finish();
+                        }
+                    });
+                } else {
                     Log.e("Login", "failed: " + response.code());
                     Toast.makeText(getActivity(), "invalid login", Toast.LENGTH_SHORT).show();
                 }
@@ -89,7 +150,21 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.e("Login", "failed: " + t.getMessage());
+                Log.e("Login", "API failed: " + t.getMessage());
+
+                String username = usernameInput.getText().toString().trim();
+                String password = passwordInput.getText().toString().trim();
+
+                User localUser = userDao.getUserByCredentials(username, password);
+
+                if (localUser != null) {
+                    Log.d("Login", "Offline login success for user: " + localUser.getUsername());
+                    Toast.makeText(getActivity(), "Offline login success", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                    requireActivity().finish();
+                } else {
+                    Toast.makeText(getActivity(), "Offline login failed. No local user found.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -104,9 +179,7 @@ public class LoginFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "Rangt notandanafn eða lykilorð", Toast.LENGTH_SHORT).show();
         }*/
-
     }
-
 
     private void saveToken(String token){
         SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
@@ -114,7 +187,4 @@ public class LoginFragment extends Fragment {
         editor.putString("jwt_token", "mock_token_123456");
         editor.apply();
     }
-
-
-
 }
