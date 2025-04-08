@@ -1,5 +1,6 @@
 package com.example.hbv601G.ui.home;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +14,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hbv601G.R;
 import com.example.hbv601G.entities.Task;
+import com.example.hbv601G.services.TaskService;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private List<Task> taskList;
     private OnClickListener onClickListener;
+    private TaskService taskService;
 
 
     public interface OnClickListener{
         void onDeleteClick(Task task);
-        void onArchiveClick(Task task);
-        void onFavoriteClick(Task task);
     }
 
-    public TaskAdapter(List<Task> taskList, OnClickListener listener) {
+    public TaskAdapter(List<Task> taskList, OnClickListener listener, TaskService taskService) {
         this.taskList = taskList;
         this.onClickListener = listener;
+    this.taskService = taskService;
     }
 
     @NonNull
@@ -61,14 +67,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 task.getFavorite() ? "❤" : "not favorite"
         );
 
-        holder.category.setText(
-                task.getCategory().getCategoryName()
-        );
+        if (task.getCategory() != null) {
+            holder.category.setText(task.getCategory().getCategoryName());
 
-        try {
-            int parsedColor = Color.parseColor(task.getCategory().getCategoryColor());
-            holder.cardView.setCardBackgroundColor(parsedColor);
-        }catch (IllegalArgumentException e){
+            try {
+                int parsedColor = Color.parseColor(task.getCategory().getCategoryColor());
+                holder.cardView.setCardBackgroundColor(parsedColor);
+            } catch (IllegalArgumentException e) {
+                holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+            }
+
+        } else {
+            holder.category.setText("No Category");
             holder.cardView.setCardBackgroundColor(Color.LTGRAY);
         }
 
@@ -83,15 +93,51 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         });
 
         holder.favoriteClick.setOnClickListener(v->{
-            if (onClickListener != null) {
-                onClickListener.onFavoriteClick(task);
-            }
+            taskService.toggleFavorite(task.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()){
+                        task.setFavorite(!task.getFavorite());
+
+                        notifyItemChanged(holder.getBindingAdapterPosition());
+                        Log.d("Favorite", "Toggle succesful");
+                    }
+                    else {
+                        Log.d("Favorite", "Toggle Failed: " + response.code());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("Toggle", "Error: " + t.getMessage());
+
+                }
+            });
+
         });
 
         holder.archivedClick.setOnClickListener(v->{
-            if (onClickListener != null) {
-                onClickListener.onArchiveClick(task);
-            }
+            taskService.toggleArchive(task.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()){
+                        task.setArchived(!task.getArchived());
+
+                        notifyItemChanged(holder.getBindingAdapterPosition());
+                        Log.d("Archive", "Toggle succesful");
+                    }
+                    else {
+                        Log.d("Archive", "Toggle Failed: "+ response.code());
+                    }
+                }
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("Toggle", "Error: " + t.getMessage());
+
+                }
+            });
+
         });
 
 

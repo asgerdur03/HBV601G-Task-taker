@@ -40,10 +40,13 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
 
-    private List<Task> taskList;
+    private List<Task> taskList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -51,34 +54,37 @@ public class HomeFragment extends Fragment {
         recyclerView = binding.recyclerViewTasks;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(taskList, new TaskAdapter.OnClickListener() {
-            // todo: implement by calling api (home)
+        taskAdapter = new TaskAdapter(taskList, task -> deleteTask(task), service);
 
-            @Override
-            public void onDeleteClick(Task task) {
-                Toast.makeText(getContext(), "delete task from home", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onArchiveClick(Task task) {
-                Toast.makeText(getContext(), "archive task", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onFavoriteClick(Task task) {
-                Toast.makeText(getContext(), "favorite task from home", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-        );
         recyclerView.setAdapter(taskAdapter);
+
 
         fetchTasks();
 
 
         return root;
+    }
+
+    private void deleteTask(Task task){
+        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
+        service.deleteTask(task.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    taskList.remove(task);
+                    taskAdapter.updateTasks(taskList);
+                }
+                else {
+                    Log.e("Task Debug", "Error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Task Debug", "Error: " + t.getMessage());
+            }
+        });
     }
 
 
@@ -102,6 +108,7 @@ public class HomeFragment extends Fragment {
 
                     Log.d("taskDebug", "size: " + tasks.size());
 
+                    taskList = tasks;
                     taskAdapter.updateTasks(tasks);
 
                 }else{

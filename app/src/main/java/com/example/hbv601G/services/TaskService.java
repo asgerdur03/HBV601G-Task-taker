@@ -5,8 +5,10 @@ import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
@@ -26,6 +28,20 @@ public interface TaskService {
 
     @POST("/tasks")
     Call<JsonObject> createTask(@Body Task task);
+
+    @DELETE("tasks/{id}")
+    Call<Void> deleteTask(@Path("id") long id);
+
+    @PUT("tasks/toggle-archive/{id}")
+    Call<Void> toggleArchive(@Path("id") long id);
+
+    @PUT("tasks/toggle-like/{id}")
+    Call<Void> toggleFavorite(@Path("id") long id);
+
+
+
+
+
 
 
 
