@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,7 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
     private List<Category> categoryList;
-    private OnDeleteClickListener deleteClickListener;
+    public OnDeleteClickListener deleteClickListener;
 
     public interface OnDeleteClickListener {
         void onDeleteClick(Category category);
@@ -75,7 +76,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     static class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView name, color;
-        Button deleteButton;
+        ImageButton deleteButton;
         CardView cardView;
 
         public CategoryViewHolder(@NonNull View itemView) {

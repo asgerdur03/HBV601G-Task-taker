@@ -70,7 +70,6 @@ public class LoginFragment extends Fragment {
                     String username = user.get("username").getAsString();
 
                     Log.d("Login", "User: " + username);
-                    // TODO: Save the token, so i can call the locked routes, else the redirect is enough
 
                     TokenManager tokenManager = new TokenManager(requireContext());
                     tokenManager.saveToken(token);

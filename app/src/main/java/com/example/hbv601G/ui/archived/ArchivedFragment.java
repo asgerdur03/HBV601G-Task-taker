@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hbv601G.databinding.FragmentArchivedBinding;
 import com.example.hbv601G.entities.Task;
@@ -21,6 +22,7 @@ import com.example.hbv601G.entities.User;
 import com.example.hbv601G.networking.NetworkingService;
 import com.example.hbv601G.services.TaskService;
 import com.example.hbv601G.services.UserService;
+import com.example.hbv601G.ui.home.HomeFragment;
 import com.example.hbv601G.ui.home.TaskAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -41,6 +43,7 @@ public class ArchivedFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
 
+    private List<Task> taskList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,19 +51,44 @@ public class ArchivedFragment extends Fragment {
         binding = FragmentArchivedBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // TODO: remove, Add actual call to Archived
-        loadAdmin();
-
         recyclerView = binding.recyclerViewTasks;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(new ArrayList<>());
+        TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        taskAdapter = new TaskAdapter(taskList, task -> deleteTask(task), taskService);
         recyclerView.setAdapter(taskAdapter);
 
         fetchTasks();
 
         return root;
     }
+
+    private void deleteTask(Task task){
+
+        TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
+        taskService.deleteTask(task.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    taskList.remove(task);
+                    taskAdapter.updateTasks(taskList);
+                }
+                else {
+                    Log.e("Task Debug", "Error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Task Debug", "Error: " + t.getMessage());
+            }
+        });
+    }
+
 
     private void fetchTasks(){
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
@@ -82,6 +110,7 @@ public class ArchivedFragment extends Fragment {
 
                     Log.d("ArchivedTaskDebug", "size: " + tasks.size());
 
+                    taskList = tasks;
                     taskAdapter.updateTasks(tasks);
 
                 }else{

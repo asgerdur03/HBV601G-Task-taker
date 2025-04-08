@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.widget.Toast;
+
 import android.widget.Spinner;
 import android.widget.ToggleButton;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -50,8 +52,13 @@ public class HomeFragment extends Fragment {
     private TaskAdapter taskAdapter;
     private List<Task> allTasks = new ArrayList<>(); // store all unfiltered tasks
 
+    private List<Task> taskList = new ArrayList<>();
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -59,8 +66,11 @@ public class HomeFragment extends Fragment {
         recyclerView = binding.recyclerViewTasks;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(new ArrayList<>());
+        taskAdapter = new TaskAdapter(taskList, task -> deleteTask(task), service);
+
         recyclerView.setAdapter(taskAdapter);
+
+
 
         ChipGroup chipGroupDueDate = binding.chipGroupDueDate;
         ToggleButton toggleFavorites = binding.toggleFavorites;
@@ -107,11 +117,35 @@ public class HomeFragment extends Fragment {
         );
         binding.spinnerCategory.setAdapter(categoryAdapter);
 
+
         fetchTasks();
 
 
         return root;
     }
+
+    private void deleteTask(Task task){
+        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+
+        service.deleteTask(task.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    taskList.remove(task);
+                    taskAdapter.updateTasks(taskList);
+                }
+                else {
+                    Log.e("Task Debug", "Error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Task Debug", "Error: " + t.getMessage());
+            }
+        });
+    }
+
 
     private void fetchTasks(){
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
@@ -133,8 +167,13 @@ public class HomeFragment extends Fragment {
 
                     Log.d("taskDebug", "size: " + tasks.size());
 
+                  // todo: skoða betur eftir pull
+                    taskList = tasks;
+                    taskAdapter.updateTasks(tasks);
+
                     allTasks = tasks;
                     filterTasks();
+
 
                 }else{
                     Log.e("Tasks", "Failed with code: " + response.code());
