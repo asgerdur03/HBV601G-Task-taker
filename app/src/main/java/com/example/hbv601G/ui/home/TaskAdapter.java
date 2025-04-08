@@ -7,6 +7,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.os.Bundle;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+
+
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -52,6 +58,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = taskList.get(position);
 
         holder.taskTitle.setText(task.getTaskName());
+        holder.itemView.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("taskId", (int) task.getId());
+
+
+            NavController navController = Navigation.findNavController(v);
+            navController.navigate(R.id.action_navigation_home_to_taskDetailFragment, bundle);
+        });
+
 
         holder.dueDate.setText(
                 task.getDueDate() != null ? task.getDueDate().toString() : "No date"

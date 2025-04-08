@@ -11,6 +11,8 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.PATCH;
+import retrofit2.http.Headers;
 
 public interface TaskService {
 
@@ -29,6 +31,7 @@ public interface TaskService {
     @POST("/tasks")
     Call<JsonObject> createTask(@Body Task task);
 
+
     @DELETE("tasks/{id}")
     Call<Void> deleteTask(@Path("id") long id);
 
@@ -38,12 +41,12 @@ public interface TaskService {
     @PUT("tasks/toggle-like/{id}")
     Call<Void> toggleFavorite(@Path("id") long id);
 
-
-
-
-
-
-
+    @PATCH("/tasks/{id}")
+    @Headers("Content-Type: application/json")
+    Call<JsonObject> updateTask(
+            @Path("id") long taskId,
+            @Body JsonObject taskUpdateBody
+    );
 
 
 }

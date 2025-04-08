@@ -78,6 +78,7 @@ public interface UserService{
             @Field("password") String password
     );
 
+
     @DELETE("/delete/me")
     Call<JsonObject> deleteUser();
 
