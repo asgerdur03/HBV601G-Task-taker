@@ -1,6 +1,7 @@
 package com.example.hbv601G.ui.tasks;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +12,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
 
 import com.example.hbv601G.R;
-import com.example.hbv601G.services.TaskService;
 import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.services.TaskService;
 import com.google.gson.JsonObject;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +30,10 @@ public class TaskDetailFragment extends Fragment {
     private Button saveButton, archiveButton, deleteButton;
     private long taskId;
     private boolean isArchived;
+
+    private String oldTitle = "";
+    private String oldNote = "";
+    private String oldDueDate = "";
 
     @Nullable
     @Override
@@ -60,29 +64,37 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    JsonObject task = response.body();
-                    if (task.has("taskName")) {
-                        titleInput.setText(task.get("taskName").getAsString());
-                    }
+                    Log.d("TASK_DETAIL", "API response body: " + response.body().toString());
 
-                    if (task.has("taskNote")) {
-                        noteInput.setText(task.get("taskNote").getAsString());
-                    }
+                    JsonObject root = response.body();
+                    if (root.has("task") && root.get("task").isJsonObject()) {
+                        JsonObject task = root.getAsJsonObject("task");
 
-                    if (task.has("dueDate")) {
-                        dueDateInput.setText(task.get("dueDate").getAsString());
-                    }
-                    if (task.has("archived") && !task.get("archived").isJsonNull()) {
-                        isArchived = task.get("archived").getAsBoolean();
-                        archiveButton.setText(isArchived ? "Unarchive" : "Archive");
+                        if (task.has("taskName") && !task.get("taskName").isJsonNull()) {
+                            oldTitle = task.get("taskName").getAsString();
+                            titleInput.setText(oldTitle);
+                        }
+                        if (task.has("taskNote") && !task.get("taskNote").isJsonNull()) {
+                            oldNote = task.get("taskNote").getAsString();
+                            noteInput.setText(oldNote);
+                        }
+                        if (task.has("dueDate") && !task.get("dueDate").isJsonNull()) {
+                            oldDueDate = task.get("dueDate").getAsString();
+                            dueDateInput.setText(oldDueDate);
+                        }
+                        if (task.has("archived") && !task.get("archived").isJsonNull()) {
+                            isArchived = task.get("archived").getAsBoolean();
+                            archiveButton.setText(isArchived ? "Unarchive" : "Archive");
+                        } else {
+                            isArchived = false;
+                            archiveButton.setText("Archive");
+                        }
                     } else {
-                        isArchived = false;
-                        archiveButton.setText("Archive");
+                        Toast.makeText(getContext(), "Task fannst ekki í JSON svari", Toast.LENGTH_SHORT).show();
                     }
-
-                 } else {
-                Toast.makeText(getContext(), "Ekki tókst að sækja task", Toast.LENGTH_SHORT).show();
-            }
+                } else {
+                    Toast.makeText(getContext(), "Ekki tókst að sækja task", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -92,18 +104,21 @@ public class TaskDetailFragment extends Fragment {
         });
 
         saveButton.setOnClickListener(v -> {
+            String newTitle = titleInput.getText().toString().trim();
+            String newNote = noteInput.getText().toString().trim();
+            String newDueDate = dueDateInput.getText().toString().trim();
+
             JsonObject update = new JsonObject();
-            update.addProperty("taskName", titleInput.getText().toString());
-            update.addProperty("taskNote", noteInput.getText().toString());
-            update.addProperty("dueDate", dueDateInput.getText().toString());
+            update.addProperty("taskName", newTitle.isEmpty() ? oldTitle : newTitle);
+            update.addProperty("taskNote", newNote.isEmpty() ? oldNote : newNote);
+            update.addProperty("dueDate", newDueDate.isEmpty() ? oldDueDate : newDueDate);
 
             taskService.updateTask(taskId, update).enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     if (response.isSuccessful()) {
                         Toast.makeText(getContext(), "Verkefni uppfært!", Toast.LENGTH_SHORT).show();
-                        NavController navController = Navigation.findNavController(requireView());
-                        navController.popBackStack();
+                        Navigation.findNavController(requireView()).popBackStack();
                     } else {
                         Toast.makeText(getContext(), "Villa við uppfærslu", Toast.LENGTH_SHORT).show();
                     }
@@ -138,7 +153,6 @@ public class TaskDetailFragment extends Fragment {
                 }
             });
         });
-
 
         deleteButton.setOnClickListener(v -> {
             Toast.makeText(getContext(), "Delete task – kóði ekki útfærður enn", Toast.LENGTH_SHORT).show();
