@@ -198,16 +198,15 @@ public class HomeFragment extends Fragment {
             }
 
             // Priority filter
-            //if (!selectedPriority.equals("Any") &&
-                    //(task.getTaskPriority() == null || !selectedPriority.equalsIgnoreCase(task.getTaskPriority().name()))) {
-               // matches = false;
-            //}
+            if (!selectedPriority.equals("Any") && (task.getPriority() == null || !selectedPriority.equalsIgnoreCase(task.getPriority()))) {
+                matches = false;
+            }
 
             // Status filter
-            //if (!selectedStatus.equals("Any") &&
-                    //(task.getTaskStatus() == null || !selectedStatus.equalsIgnoreCase(task.getTaskStatus().name()))) {
-                //matches = false;
-            //}
+            if (!selectedStatus.equals("Any") &&
+                    (task.getStatus() == null || !selectedStatus.equalsIgnoreCase(task.getStatus()))) {
+                matches = false;
+            }
 
             // Favorites filter
             if (onlyFavorites && !Boolean.TRUE.equals(task.getFavorite())) {
