@@ -198,8 +198,7 @@ public class HomeFragment extends Fragment {
             }
 
             // Priority filter
-            if (!selectedPriority.equals("Any") &&
-                    (task.getPriority() == null || !selectedPriority.equalsIgnoreCase(task.getPriority()))) {
+            if (!selectedPriority.equals("Any") && (task.getPriority() == null || !selectedPriority.equalsIgnoreCase(task.getPriority()))) {
                 matches = false;
             }
 

@@ -9,6 +9,8 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.PATCH;
+import retrofit2.http.Headers;
 
 public interface TaskService {
 
@@ -26,6 +28,13 @@ public interface TaskService {
 
     @POST("/tasks")
     Call<JsonObject> createTask(@Body Task task);
+
+    @PATCH("/tasks/{id}")
+    @Headers("Content-Type: application/json")
+    Call<JsonObject> updateTask(
+            @Path("id") long taskId,
+            @Body JsonObject taskUpdateBody
+    );
 
 
 
