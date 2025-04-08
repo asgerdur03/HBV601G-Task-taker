@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -39,6 +40,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
 
+    private List<Task> taskList;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -48,7 +51,28 @@ public class HomeFragment extends Fragment {
         recyclerView = binding.recyclerViewTasks;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(new ArrayList<>());
+        taskAdapter = new TaskAdapter(taskList, new TaskAdapter.OnClickListener() {
+            // todo: implement by calling api (home)
+
+            @Override
+            public void onDeleteClick(Task task) {
+                Toast.makeText(getContext(), "delete task from home", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onArchiveClick(Task task) {
+                Toast.makeText(getContext(), "archive task", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFavoriteClick(Task task) {
+                Toast.makeText(getContext(), "favorite task from home", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+        );
         recyclerView.setAdapter(taskAdapter);
 
         fetchTasks();
@@ -56,6 +80,7 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
 
     private void fetchTasks(){
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);

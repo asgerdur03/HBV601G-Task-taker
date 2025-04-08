@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hbv601G.databinding.FragmentArchivedBinding;
 import com.example.hbv601G.entities.Task;
@@ -41,6 +42,8 @@ public class ArchivedFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
 
+    private List<Task> taskList = new ArrayList<>();
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,19 +51,39 @@ public class ArchivedFragment extends Fragment {
         binding = FragmentArchivedBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // TODO: remove, Add actual call to Archived
-        loadAdmin();
-
         recyclerView = binding.recyclerViewTasks;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(new ArrayList<>());
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        taskAdapter = new TaskAdapter(taskList, new TaskAdapter.OnClickListener() {
+            // todo: implement by calling api (archived)
+            @Override
+            public void onDeleteClick(Task task) {
+                Toast.makeText(getContext(), "delete task from archived", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onArchiveClick(Task task) {
+                Toast.makeText(getContext(), "Unarchive task", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFavoriteClick(Task task) {
+                Toast.makeText(getContext(), "favorite task from archived", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+        );
         recyclerView.setAdapter(taskAdapter);
 
         fetchTasks();
 
         return root;
     }
+
+
 
     private void fetchTasks(){
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);

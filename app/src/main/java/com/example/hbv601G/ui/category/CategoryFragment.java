@@ -44,8 +44,7 @@ public class CategoryFragment extends Fragment {
 
     private FragmentCategoryBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCategoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -57,16 +56,12 @@ public class CategoryFragment extends Fragment {
         binding.categoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new CategoryAdapter(categoryList, category -> deleteCategory(category));
         binding.categoryRecyclerView.setAdapter(adapter);
-
         createCategoryButton.setOnClickListener(v -> createCategory());
-
         loadCategories();
-
 
         return root;
     }
 
-    // todo: replace mock with api
      private void loadCategories(){
         CategoryService categoryService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(CategoryService.class);
 
@@ -98,16 +93,13 @@ public class CategoryFragment extends Fragment {
 
             }
         });
-
-
         adapter.updateList(categoryList);
-
     }
 
     private void deleteCategory(Category category){
         CategoryService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(CategoryService.class);
 
-        // todo: fix the api, the api is not accually deleting, but the call and forntend is working
+        // todo: quality check, api only deletes if no task is using category
         service.deleteCategory(category.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

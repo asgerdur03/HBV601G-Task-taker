@@ -29,36 +29,18 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // setja á navbar
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_category, R.id.navigation_settings, R.id.navigation_archived)
+                R.id.navigation_home, R.id.navigation_category, R.id.navigation_settings, R.id.navigation_archived, R.id.navigation_newTask)
                 .build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        FloatingActionButton fab = findViewById(R.id.new_task);
-
-        // todo: make onCLick, redirect to new task tab
-        fab.setOnClickListener(v ->
-                        Toast.makeText(MainActivity.this, "new task button", Toast.LENGTH_SHORT).show());
-
-               /* {
-            navController.navigate(R.id.navigation_new_task, null, new NavOptions.Builder()
-                    .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
-                    .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
-                    .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
-                    .build());
-        }*/
-
     }
-
-
-
 
 
 }
