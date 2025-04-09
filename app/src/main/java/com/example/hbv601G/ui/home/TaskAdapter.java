@@ -22,6 +22,7 @@ import com.example.hbv601G.R;
 import com.example.hbv601G.entities.Task;
 import com.example.hbv601G.services.TaskService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,6 +34,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Task> taskList;
     private OnClickListener onClickListener;
     private TaskService taskService;
+
+    public TaskAdapter(ArrayList<Task> taskList) {
+    }
 
 
     public interface OnClickListener{

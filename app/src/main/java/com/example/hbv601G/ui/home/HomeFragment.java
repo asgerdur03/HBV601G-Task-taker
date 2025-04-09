@@ -2,19 +2,25 @@ package com.example.hbv601G.ui.home;
 import static android.text.format.DateUtils.isToday;
 
 import com.example.hbv601G.R;
+import com.example.hbv601G.entities.User;
+
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.Toast;
-
 import android.widget.Spinner;
 import android.widget.ToggleButton;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.hbv601G.data.local.AppDatabase;
+import com.example.hbv601G.data.local.TaskDao;
+import com.example.hbv601G.data.local.UserDao;
 import com.example.hbv601G.databinding.FragmentHomeBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,13 +58,11 @@ public class HomeFragment extends Fragment {
     private TaskAdapter taskAdapter;
     private List<Task> allTasks = new ArrayList<>(); // store all unfiltered tasks
 
-    private List<Task> taskList = new ArrayList<>();
+    private TaskDao taskDao;
+    private UserDao userDao;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
-
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -66,11 +70,8 @@ public class HomeFragment extends Fragment {
         recyclerView = binding.recyclerViewTasks;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        taskAdapter = new TaskAdapter(taskList, task -> deleteTask(task), service);
-
+        taskAdapter = new TaskAdapter(new ArrayList<>());
         recyclerView.setAdapter(taskAdapter);
-
-
 
         ChipGroup chipGroupDueDate = binding.chipGroupDueDate;
         ToggleButton toggleFavorites = binding.toggleFavorites;
@@ -107,10 +108,8 @@ public class HomeFragment extends Fragment {
         for (Task task : allTasks) {
             if (task.getCategory() != null && task.getCategory().getCategoryName() != null) {
                 categoryNames.add(task.getCategory().getCategoryName());
-
             }
         }
-
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -118,36 +117,16 @@ public class HomeFragment extends Fragment {
                 new ArrayList<>(categoryNames)
         );
         binding.spinnerCategory.setAdapter(categoryAdapter);
-        binding.spinnerCategory.setSelection(categoryAdapter.getPosition("Any"));
+
+        AppDatabase db = AppDatabase.getInstance(requireContext());
+        taskDao = db.taskDao();
+        userDao = db.userDao();
 
         fetchTasks();
 
 
         return root;
     }
-
-    private void deleteTask(Task task){
-        TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
-
-        service.deleteTask(task.getId()).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()){
-                    taskList.remove(task);
-                    taskAdapter.updateTasks(taskList);
-                }
-                else {
-                    Log.e("Task Debug", "Error: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("Task Debug", "Error: " + t.getMessage());
-            }
-        });
-    }
-
 
     private void fetchTasks(){
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
@@ -169,23 +148,41 @@ public class HomeFragment extends Fragment {
 
                     Log.d("taskDebug", "size: " + tasks.size());
 
-                    taskList = tasks;
-                    taskAdapter.updateTasks(tasks);
-
                     allTasks = tasks;
                     filterTasks();
 
-
                 }else{
                     Log.e("Tasks", "Failed with code: " + response.code());
+                    loadOfflineTasks();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.e("taskDebug", "API failed or offline, falling back to offline tasks");
+                loadOfflineTasks();
 
             }
         });
+    }
+
+    private void loadOfflineTasks() {
+        String username = getLoggedInUsername();
+        if (username != null) {
+            User user = userDao.getUserByUsername(username);
+            if (user != null) {
+                allTasks = taskDao.getTasksForUser(user.getId());
+                filterTasks();
+                Log.d("OfflineTasks", "Loaded " + allTasks.size() + " tasks from local DB");
+            } else {
+                Log.e("OfflineTasks", "User not found in local DB");
+            }
+        }
+    }
+
+    private String getLoggedInUsername() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("logged_in_username", null);
     }
 
     @Override
@@ -238,7 +235,8 @@ public class HomeFragment extends Fragment {
             }
 
             // Priority filter
-            if (!selectedPriority.equals("Any") && (task.getPriority() == null || !selectedPriority.equalsIgnoreCase(task.getPriority()))) {
+            if (!selectedPriority.equals("Any") &&
+                    (task.getPriority() == null || !selectedPriority.equalsIgnoreCase(task.getPriority()))) {
                 matches = false;
             }
 

@@ -7,7 +7,7 @@
 ## Progress report
 
 - Offline: Ef við erum með eitthvað er það nóg, (Hemmi sér um)
-- Upload profile pic: Ekki komið
+- Upload profile pic: Ekki komið - komið bkv freydis en tjékkið á því
 
 ## Todo
 
