@@ -11,11 +11,14 @@
 
 ## Todo
 
-- Klára user stories
 - Prófa ALLAR aðgerðir, finna bugs in the edge cases, svo að forrit crashi ekki (við framkvæmum ekki buggy shit) í kynningu
 - Gera github wiki (plz ekki ég (Ása) nn ekki)
 - Gera glærukynningu (5 mín)
 - Pakka öllu upp fyrir skil í egv (zip file?) og skila og ekki hugsa um hugbó aftur
+
+
+- laga enum in_progress í filter
+- enums í status í edit task
 
 
 Task manager application
