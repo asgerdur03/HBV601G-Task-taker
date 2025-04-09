@@ -84,19 +84,36 @@ public interface UserService{
 
     @Multipart
     @POST("/upload-pic")
-    //todo: replace with return value, do not remeber what
-    Call<Void> uploadImage(
-            @Part MultipartBody.Part profilePic
+    Call<JsonObject> uploadImage(
+            @Part MultipartBody.Part image
     );
+    /*
+   // frá chat, hvernig á að kalla á api með image
+    File file = new File(filePath); // filePath = actual image file path
+RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
+UserService service = NetworkingService.getRetrofitAuthInstance(context).create(UserService.class);
 
+service.uploadProfilePicture(body).enqueue(new Callback<JsonObject>() {
+    @Override
+    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+        if (response.isSuccessful() && response.body() != null) {
+            String uploadedPath = response.body().get("path").getAsString();
+            Log.d("Upload", "Success! Path: " + uploadedPath);
+            // You can now use this path in the UI if needed
+        } else {
+            Log.e("Upload", "Failed with code: " + response.code());
+        }
+    }
 
+    @Override
+    public void onFailure(Call<JsonObject> call, Throwable t) {
+        Log.e("Upload", "Error: " + t.getMessage());
+    }
+});
 
-
-
-
-
-
+     */
 
 
 }

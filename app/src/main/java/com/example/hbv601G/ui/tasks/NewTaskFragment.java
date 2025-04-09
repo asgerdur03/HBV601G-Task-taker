@@ -79,7 +79,6 @@ public class NewTaskFragment extends Fragment {
     }
 
     private void createTask(){
-        // todo: add toast to indicate task has been created
         String title = taskTitle.getText().toString().trim();
         String note = taskNote.getText().toString().trim();
         String due = dueDate.getText().toString().trim();
@@ -87,29 +86,26 @@ public class NewTaskFragment extends Fragment {
         if (title.isEmpty() || due.isEmpty() || selectedCategoryId == -1
                 || selectedStatus == null || selectedPriority == null) {
             Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-
             return;
         }
 
         Task newTask = new Task(title, note, selectedStatus,selectedPriority, due, selectedCategoryId );
 
-        Log.d("Create Task Debug", "Created: " + newTask.toString());
-
         TaskService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
-
 
         service.createTask(newTask).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null){
                     Log.d("Task Debug", "Task created");
+                    Toast.makeText(getContext(), "Task Created Successfully",Toast.LENGTH_SHORT).show();
                     taskNote.setText("");
                     taskTitle.setText("");
                     dueDate.setText("");
                 }else {
                     Log.e("Task Debug", "Failed: "+ response.code());
+                    Toast.makeText(getContext(), "Failed to create task",Toast.LENGTH_SHORT).show();
                 }
-
             }
 
             @Override
@@ -118,11 +114,9 @@ public class NewTaskFragment extends Fragment {
 
             }
         });
-
     }
 
     private void loadCategories() {
-        // todo: replace with actuall categories
         CategoryService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(CategoryService.class);
 
         service.getCategories().enqueue(new Callback<JsonObject>() {
@@ -139,34 +133,25 @@ public class NewTaskFragment extends Fragment {
                         parsedList.add(category);
                         Log.d("Task Debug", "Added :" + category.toString());
                     }
-
                     categoryList = parsedList;
 
                     List<String> categoryNames = new ArrayList<>();
                     for (Category category: categoryList){
                         categoryNames.add(category.getCategoryName());
                     }
-
                     setupSpinner(categorySpinner, categoryNames, (position) ->{
                         selectedCategoryId = categoryList.get(position).getId();
-
                     });
-
-
 
                 } else{
                     Log.e("Task Debug", "Failed code: " + response.code());
                 }
-
             }
-
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 Log.e("Task Debug", "Error: "+ t.getMessage());
-
             }
         });
-
     }
 
 
@@ -200,9 +185,7 @@ public class NewTaskFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
     }
-
     private interface OnItemSelected{
         void onItemSelected(int position);
     }

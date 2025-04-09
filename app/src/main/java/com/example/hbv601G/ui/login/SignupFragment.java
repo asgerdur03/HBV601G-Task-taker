@@ -75,7 +75,7 @@ public class SignupFragment extends Fragment {
                     authActivity.switchToLogin(); // Redirect to login if successful
 
                 } else {
-                    // todo: Add toast on failure
+                    Toast.makeText(getActivity(), "Signup failed", Toast.LENGTH_SHORT).show();
                     Log.e("Signup", "Failed: " + response.code());
                 }
 
