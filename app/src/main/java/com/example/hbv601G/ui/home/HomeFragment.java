@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment {
                 new ArrayList<>(categoryNames)
         );
         binding.spinnerCategory.setAdapter(categoryAdapter);
-
+        binding.spinnerCategory.setSelection(categoryAdapter.getPosition("Any"));
 
         fetchTasks();
 

@@ -17,6 +17,7 @@
 - Gera glærukynningu (5 mín)
 - Pakka öllu upp fyrir skil í egv (zip file?) og skila og ekki hugsa um hugbó aftur
 
+
 Task manager application
 # Task Taker Android app
 
