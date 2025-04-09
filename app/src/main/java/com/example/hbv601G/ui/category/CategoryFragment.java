@@ -99,7 +99,7 @@ public class CategoryFragment extends Fragment {
     private void deleteCategory(Category category){
         CategoryService service = NetworkingService.getRetrofitAuthInstance(requireContext()).create(CategoryService.class);
 
-        // todo: quality check, api only deletes if no task is using category
+        // ATH: Api deletes if no task is using category
         service.deleteCategory(category.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

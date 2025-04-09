@@ -23,6 +23,8 @@
     <string name="chip_today">Today</string>
     <string name="chip_this_week">This Week</string>
     <string name="chip_overdue">Overdue</string>
+    <string name="favorite">🤍</string>
+    <string name="archive">Archive</string>
 
     <string name="favorites_off">☆ Favorites</string>
     <string name="favorites_on">★ Favorites</string>

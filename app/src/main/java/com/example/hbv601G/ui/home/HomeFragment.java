@@ -169,7 +169,6 @@ public class HomeFragment extends Fragment {
 
                     Log.d("taskDebug", "size: " + tasks.size());
 
-                  // todo: skoða betur eftir pull
                     taskList = tasks;
                     taskAdapter.updateTasks(tasks);
 
