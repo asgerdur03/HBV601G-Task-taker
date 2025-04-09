@@ -8,7 +8,6 @@
 
 - Edit task: virkar og er reddý, en vantar *status* og *priority*
 - Offline: Ef við erum með eitthvað er það nóg, (Hemmi sér um)
-- Pomodoro: Ætti að vera easy
 - Upload profile pic: Ekki komið
 
 Task manager application

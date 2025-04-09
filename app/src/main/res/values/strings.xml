@@ -33,6 +33,11 @@
     <string name="hint_category_color">Color (e.g. #00ff00)</string>
     <string name="button_create_category">Create Category</string>
 
+    <string name="task_title_hint">Task Title</string>
+    <string name="task_note_hint">Task Note</string>
+    <string name="due_date_hint">Due Date (YYYY-MM-DD)</string>
+    <string name="save_task_button">Save Task</string>
+    <string name="save_changes_button">Save Changes</string>
 
 
 

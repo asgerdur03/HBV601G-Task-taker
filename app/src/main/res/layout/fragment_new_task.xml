@@ -19,7 +19,7 @@
             android:id="@+id/inputTaskTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Title"
+            android:hint="@string/task_title_hint"
             android:inputType="text" />
 
         <EditText
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:hint="Task Note"
+            android:hint="@string/task_note_hint"
             android:inputType="textMultiLine"
             android:minLines="3" />
 
@@ -60,7 +60,7 @@
             android:id="@+id/inputTaskDueDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Due Date (YYYY-MM-DD)"
+            android:hint="@string/due_date_hint"
             android:inputType="date" />
 
         <Button
@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Save Task" />
+            android:text="@string/save_task_button" />
 
     </LinearLayout>
 

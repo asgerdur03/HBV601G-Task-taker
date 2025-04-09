@@ -5,8 +5,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,9 +19,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.NavController;
 
 import com.example.hbv601G.R;
+import com.example.hbv601G.entities.Category;
 import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.services.CategoryService;
 import com.example.hbv601G.services.TaskService;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,13 +39,22 @@ public class TaskDetailFragment extends Fragment {
     // todo: reomove delete and archive button, add priority and status bar
 
     private EditText titleInput, noteInput, dueDateInput;
-    private Button saveButton, archiveButton, deleteButton;
+    private Button saveButton;
+
+    private Spinner editCategorySpinner, editStatusSpinner, editPrioritySpinner;
     private long taskId;
     private boolean isArchived;
 
     private String oldTitle = "";
     private String oldNote = "";
     private String oldDueDate = "";
+
+    private String oldPriority = "";
+    private String oldStatus = "";
+    private long oldCategoryId = -1;
+
+    private List<Category> categoryList = new ArrayList<>();
+
 
     @Nullable
     @Override
@@ -50,8 +70,10 @@ public class TaskDetailFragment extends Fragment {
         noteInput = view.findViewById(R.id.detailTaskNote);
         dueDateInput = view.findViewById(R.id.detailTaskDueDate);
         saveButton = view.findViewById(R.id.buttonSaveEdit);
-        archiveButton = view.findViewById(R.id.buttonArchive);
-        deleteButton = view.findViewById(R.id.buttonDelete);
+
+        editCategorySpinner = view.findViewById(R.id.editCategorySpinner);
+        editStatusSpinner = view.findViewById(R.id.editStatusSpinner);
+        editPrioritySpinner = view.findViewById(R.id.editPrioritySpinner);
 
         taskId = getArguments() != null ? getArguments().getInt("taskId", -1) : -1;
         if (taskId == -1) {
@@ -60,6 +82,7 @@ public class TaskDetailFragment extends Fragment {
         }
 
         TaskService taskService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(TaskService.class);
+        CategoryService categoryService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(CategoryService.class);
 
         taskService.getTaskById(taskId).enqueue(new Callback<JsonObject>() {
             @Override
@@ -83,13 +106,65 @@ public class TaskDetailFragment extends Fragment {
                             oldDueDate = task.get("dueDate").getAsString();
                             dueDateInput.setText(oldDueDate);
                         }
-                        if (task.has("archived") && !task.get("archived").isJsonNull()) {
-                            isArchived = task.get("archived").getAsBoolean();
-                            archiveButton.setText(isArchived ? "Unarchive" : "Archive");
-                        } else {
-                            isArchived = false;
-                            archiveButton.setText("Archive");
+                        if (task.has("priority") && !task.get("priority").isJsonNull()) {
+                            oldPriority = task.get("priority").getAsString();
                         }
+                        if (task.has("status") && !task.get("status").isJsonNull()) {
+                            oldStatus = task.get("status").getAsString();
+                        }
+                        if (task.has("category") && task.get("category").isJsonObject()) {
+                            oldCategoryId = task.get("category").getAsJsonObject().get("id").getAsLong();
+                        }
+
+                        setupSpinner(editStatusSpinner, new String[]{"TODO", "IN_PROGRESS", "DONE"}, oldStatus, value -> oldStatus = value);
+                        setupSpinner(editPrioritySpinner, new String[]{"LOW", "MEDIUM", "HIGH"}, oldPriority, value -> oldPriority = value);
+
+                        categoryService.getCategories().enqueue(new Callback<JsonObject>() {
+                            @Override
+                            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    JsonArray categoryArray = response.body().getAsJsonArray("categories");
+                                    categoryList.clear();
+                                    List<String> categoryNames = new ArrayList<>();
+
+                                    for (JsonElement element : categoryArray) {
+                                        Category category = new Gson().fromJson(element, Category.class);
+                                        categoryList.add(category);
+                                        categoryNames.add(category.getCategoryName());
+                                    }
+
+                                    int index = 0;
+                                    for (int i = 0; i < categoryList.size(); i++) {
+                                        if (categoryList.get(i).getId() == oldCategoryId) {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categoryNames);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    editCategorySpinner.setAdapter(adapter);
+                                    editCategorySpinner.setSelection(index);
+
+                                    editCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                        @Override
+                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                            oldCategoryId = categoryList.get(position).getId();
+                                        }
+
+                                        @Override
+                                        public void onNothingSelected(AdapterView<?> parent) {}
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<JsonObject> call, Throwable t) {
+                                Log.e("CategoryLoad", "Error loading categories: " + t.getMessage());
+                            }
+                        });
+
+
                     } else {
                         Toast.makeText(getContext(), "Task fannst ekki í JSON svari", Toast.LENGTH_SHORT).show();
                     }
@@ -114,6 +189,10 @@ public class TaskDetailFragment extends Fragment {
             update.addProperty("taskNote", newNote.isEmpty() ? oldNote : newNote);
             update.addProperty("dueDate", newDueDate.isEmpty() ? oldDueDate : newDueDate);
 
+            update.addProperty("priority", oldPriority);
+            update.addProperty("status", oldStatus);
+            update.addProperty("categoryId", oldCategoryId);
+
             taskService.updateTask(taskId, update).enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -132,31 +211,33 @@ public class TaskDetailFragment extends Fragment {
             });
         });
 
-        archiveButton.setOnClickListener(v -> {
-            JsonObject update = new JsonObject();
-            update.addProperty("archived", !isArchived);
 
-            taskService.updateTask(taskId, update).enqueue(new Callback<JsonObject>() {
-                @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    if (response.isSuccessful()) {
-                        isArchived = !isArchived;
-                        archiveButton.setText(isArchived ? "Unarchive" : "Archive");
-                        Toast.makeText(getContext(), "Tókst að uppfæra archive status", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Gat ekki breytt archive", Toast.LENGTH_SHORT).show();
-                    }
-                }
+    }
 
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                    Toast.makeText(getContext(), "Villa við tengingu", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+    private void setupSpinner(Spinner spinner, String[] values, String currentValue, OnItemSelected callback) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, values);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
-        deleteButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Delete task – kóði ekki útfærður enn", Toast.LENGTH_SHORT).show();
+        int currentIndex = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equalsIgnoreCase(currentValue)) {
+                currentIndex = i;
+                break;
+            }
+        }
+        spinner.setSelection(currentIndex);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                callback.onItemSelected(values[position]);
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
+    interface OnItemSelected {
+        void onItemSelected(String value);
+    }
+
 }
