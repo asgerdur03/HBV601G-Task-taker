@@ -2,6 +2,11 @@ package com.example.hbv601G.ui.home;
 import static android.text.format.DateUtils.isToday;
 
 import com.example.hbv601G.R;
+import com.example.hbv601G.entities.User;
+
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +18,9 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.hbv601G.data.local.AppDatabase;
+import com.example.hbv601G.data.local.TaskDao;
+import com.example.hbv601G.data.local.UserDao;
 import com.example.hbv601G.databinding.FragmentHomeBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +57,9 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private TaskAdapter taskAdapter;
     private List<Task> allTasks = new ArrayList<>(); // store all unfiltered tasks
+
+    private TaskDao taskDao;
+    private UserDao userDao;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +118,10 @@ public class HomeFragment extends Fragment {
         );
         binding.spinnerCategory.setAdapter(categoryAdapter);
 
+        AppDatabase db = AppDatabase.getInstance(requireContext());
+        taskDao = db.taskDao();
+        userDao = db.userDao();
+
         fetchTasks();
 
 
@@ -138,14 +153,36 @@ public class HomeFragment extends Fragment {
 
                 }else{
                     Log.e("Tasks", "Failed with code: " + response.code());
+                    loadOfflineTasks();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.e("taskDebug", "API failed or offline, falling back to offline tasks");
+                loadOfflineTasks();
 
             }
         });
+    }
+
+    private void loadOfflineTasks() {
+        String username = getLoggedInUsername();
+        if (username != null) {
+            User user = userDao.getUserByUsername(username);
+            if (user != null) {
+                allTasks = taskDao.getTasksForUser(user.getId());
+                filterTasks();
+                Log.d("OfflineTasks", "Loaded " + allTasks.size() + " tasks from local DB");
+            } else {
+                Log.e("OfflineTasks", "User not found in local DB");
+            }
+        }
+    }
+
+    private String getLoggedInUsername() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        return prefs.getString("logged_in_username", null);
     }
 
     @Override

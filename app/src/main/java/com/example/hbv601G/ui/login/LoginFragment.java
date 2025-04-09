@@ -101,6 +101,9 @@ public class LoginFragment extends Fragment {
                     TokenManager tokenManager = new TokenManager(requireContext());
                     tokenManager.saveToken(token);
                     Log.d("TokenTest", "Saved token: " + tokenManager.getToken());
+                    SharedPreferences prefs = requireContext().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                    prefs.edit().putString("logged_in_username", user.getUsername()).apply();
+
 
                     TaskService taskService = NetworkingService.getRetrofitInstance().create(TaskService.class);
 
@@ -123,10 +126,18 @@ public class LoginFragment extends Fragment {
                                         task.setCompleted(taskObj.get("completed").getAsBoolean());
                                         task.setUserId(user.getId());
                                         tasksToSave.add(task);
+
+                                        task.setTaskName(taskObj.has("title") ? taskObj.get("title").getAsString() : "");
+                                        task.setTaskNote(taskObj.has("description") ? taskObj.get("description").getAsString() : "");
+                                        task.setPriority(taskObj.has("priority") ? taskObj.get("priority").getAsString() : "Medium");
+                                        task.setStatus(taskObj.has("status") ? taskObj.get("status").getAsString() : "Pending");
+                                        task.setFavorite(taskObj.has("favorite") && !taskObj.get("favorite").isJsonNull() ? taskObj.get("favorite").getAsBoolean() : false);
+                                        task.setArchived(taskObj.has("archived") && !taskObj.get("archived").isJsonNull() ? taskObj.get("archived").getAsBoolean() : false);
                                     }
 
                                     taskDao.deleteTasksForUser(user.getId());
                                     taskDao.insertAll(tasksToSave);
+
 
                                     Log.d("Login", "Tasks saved: " + tasksToSave.size());
                                 }
