@@ -17,6 +17,21 @@
 
     <!-- Button and other strings-->
     <string name="delete">Delete</string>
+    <string name="priority">Priority</string>
+    <string name="status">Status</string>
+    <string name="category">Category</string>
+    <string name="chip_today">Today</string>
+    <string name="chip_this_week">This Week</string>
+    <string name="chip_overdue">Overdue</string>
+
+    <string name="favorites_off">☆ Favorites</string>
+    <string name="favorites_on">★ Favorites</string>
+
+    <string name="hint_category_name">Category Name</string>
+    <string name="hint_category_color">Color (e.g. #00ff00)</string>
+    <string name="button_create_category">Create Category</string>
+
+
 
 
     <string name="hello_blank_fragment">Hello blank fragment</string>

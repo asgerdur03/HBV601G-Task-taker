@@ -107,8 +107,10 @@ public class HomeFragment extends Fragment {
         for (Task task : allTasks) {
             if (task.getCategory() != null && task.getCategory().getCategoryName() != null) {
                 categoryNames.add(task.getCategory().getCategoryName());
+
             }
         }
+
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 requireContext(),

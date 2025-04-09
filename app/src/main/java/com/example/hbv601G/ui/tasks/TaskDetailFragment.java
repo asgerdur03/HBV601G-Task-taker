@@ -25,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TaskDetailFragment extends Fragment {
+    // todo: reomove delete and archive button, add priority and status bar
 
     private EditText titleInput, noteInput, dueDateInput;
     private Button saveButton, archiveButton, deleteButton;
