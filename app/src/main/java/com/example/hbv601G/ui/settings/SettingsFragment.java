@@ -3,13 +3,19 @@ package com.example.hbv601G.ui.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -20,19 +26,14 @@ import com.example.hbv601G.networking.NetworkingService;
 import com.example.hbv601G.services.UserService;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import android.content.Intent;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.widget.Button;
-import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
 
 public class SettingsFragment extends Fragment {
 
@@ -40,7 +41,7 @@ public class SettingsFragment extends Fragment {
     private Button logoutButton;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
-
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -50,6 +51,17 @@ public class SettingsFragment extends Fragment {
         logoutButton = binding.logoutButton;
         logoutButton.setOnClickListener(v -> logoutUser());
 
+        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+
+        // loada myndina frá internal storage
+        String imagePath = prefs.getString("profile_image_path", null);
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                binding.profileImageView.setImageBitmap(bitmap);
+            }
+        }
+
         binding.uploadProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
@@ -57,35 +69,21 @@ public class SettingsFragment extends Fragment {
         });
 
         binding.removePictureButton.setOnClickListener(v -> {
-            SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("profile_image_uri");
+            editor.remove("profile_image_path");
             editor.apply();
 
-            // Reset image to default placeholder
             binding.profileImageView.setImageResource(R.drawable.baseline_person_24);
             Toast.makeText(getContext(), "Mynd fjarlægð", Toast.LENGTH_SHORT).show();
         });
 
-
-
-        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-        String savedImageUri = prefs.getString("profile_image_uri", null);
-        if (savedImageUri != null) {
-            binding.profileImageView.setImageURI(Uri.parse(savedImageUri));
-        }
-        String currentUsername = prefs.getString("user_email", "");
-        String currentPassword = prefs.getString("user_password", "");
-
-
-
+        // update user
         binding.updateButton.setOnClickListener(v -> {
             String newUsername = binding.editUsername.getText().toString().trim();
             String newPassword = binding.editPassword.getText().toString().trim();
             String email = prefs.getString("user_email", "");
 
             UserService userService = NetworkingService.getRetrofitAuthInstance(requireContext()).create(UserService.class);
-
             userService.update(newUsername, email, newPassword).enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -120,13 +118,29 @@ public class SettingsFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
+                        try {
+                            InputStream inputStream = requireContext().getContentResolver().openInputStream(selectedImageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            inputStream.close();
 
-                        binding.profileImageView.setImageURI(selectedImageUri);
+                            binding.profileImageView.setImageBitmap(bitmap);
 
-                        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-                        prefs.edit().putString("profile_image_uri", selectedImageUri.toString()).apply();
+                           // vista myndina í internal storage
+                            File file = new File(requireContext().getFilesDir(), "profile_image.jpg");
+                            FileOutputStream fos = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                            fos.close();
 
-                        Toast.makeText(requireContext(), "Valin mynd: " + selectedImageUri.toString(), Toast.LENGTH_SHORT).show();
+                            // vista pathinn
+                            SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                            prefs.edit().putString("profile_image_path", file.getAbsolutePath()).apply();
+
+                            Toast.makeText(requireContext(), "Mynd vistuð!", Toast.LENGTH_SHORT).show();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Villa við mynd", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
