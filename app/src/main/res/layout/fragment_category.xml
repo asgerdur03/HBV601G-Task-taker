@@ -8,39 +8,53 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/createCategoryForm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/categoryRecyclerView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintVertical_bias="0.202"
 
-        <!-- 🔹 Category form -->
+        >
+
         <EditText
             android:id="@+id/categoryNameInput"
-            android:hint="Category Name"
+            android:hint="@string/hint_category_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <EditText
             android:id="@+id/categoryColorInput"
-            android:hint="Color (e.g. #00ff00)"
+            android:hint="@string/hint_category_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"/>
 
         <Button
             android:id="@+id/createCategoryButton"
-            android:text="Create Category"
+            android:text="@string/button_create_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"/>
 
+    </LinearLayout>
         <!-- 🔹 Category list -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/categoryRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="16dp" />
-    </LinearLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/createCategoryForm"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="65dp"
+            />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

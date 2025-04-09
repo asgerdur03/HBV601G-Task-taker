@@ -10,127 +10,157 @@
 
     <LinearLayout
         android:id="@+id/filterBar"
-        android:layout_width="412dp"
-        android:layout_height="390dp"
-        android:background="#FF6200EE"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_purple"
+        android:elevation="6dp"
         android:orientation="vertical"
         android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewTasks"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintVertical_bias="0.202">
 
-        <!-- Due Date Filter -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="Due Date"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupDueDate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:chipSpacing="8dp"
-            app:singleSelection="true">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:layout_marginBottom="8dp"
+            >
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipToday"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupDueDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:chipSpacing="8dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipToday"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_today" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipThisWeek"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_this_week" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipOverdue"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_overdue" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <ToggleButton
+                android:id="@+id/toggleFavorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today" />
+                android:textColor="@android:color/black"
+                android:textOff="@string/favorites_off"
+                android:textOn="@string/favorites_on"
+                />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipThisWeek"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="4dp">
+
+            <TextView
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="This Week" />
+                android:text="@string/category"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipOverdue"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="8dp"
+                android:background="@android:color/white" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="4dp">
+
+            <TextView
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Overdue" />
-        </com.google.android.material.chip.ChipGroup>
+                android:text="@string/priority"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
 
-        <!-- Favorites -->
-        <ToggleButton
-            android:id="@+id/toggleFavorites"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@android:color/white"
-            android:textOff="☆ Favorites"
-            android:textOn="★ Favorites" />
-
-        <!-- Category Spinner -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Category"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spinnerCategory"
+            <Spinner
+                android:id="@+id/spinnerPriority"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="8dp"
+                android:background="@android:color/white" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="4dp">
 
-        <!-- Priority Spinner -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Priority"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/status"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"/>
 
-        <Spinner
-            android:id="@+id/spinnerPriority"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white" />
+            <Spinner
+                android:id="@+id/spinnerStatus"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="8dp"
+                android:background="@android:color/white" />
 
-        <!-- Status Spinner -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Status"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+        </LinearLayout>
 
-        <Spinner
-            android:id="@+id/spinnerStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
-        android:layout_width="394dp"
-        android:layout_height="438dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipChildren="false"
         android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@+id/filterBar"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.945" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="65dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

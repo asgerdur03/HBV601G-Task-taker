@@ -13,42 +13,54 @@
             android:id="@+id/detailTaskTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Title"
+            android:hint="@string/task_title_hint"
             android:inputType="text" />
 
         <EditText
             android:id="@+id/detailTaskNote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Note"
+            android:hint="@string/task_note_hint"
             android:minLines="3"
             android:gravity="top"
             android:inputType="textMultiLine" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/editCategorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/editStatusSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/editPrioritySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/detailTaskDueDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Due Date (YYYY-MM-DD)"
-            android:inputType="text" />
+            android:hint="@string/due_date_hint"
+            android:inputType="date" />
 
         <Button
             android:id="@+id/buttonSaveEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Changes" />
-
-        <Button
-            android:id="@+id/buttonArchive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Archive / Unarchive" />
-
-        <Button
-            android:id="@+id/buttonDelete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delete Task" />
+            android:text="@string/save_changes_button" />
 
     </LinearLayout>
 </ScrollView>

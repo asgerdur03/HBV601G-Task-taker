@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:text="taskName"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -29,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:text="taskNote" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,8 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start"
-
-                android:text="status" />
+                />
 
             <TextView
                 android:id="@+id/priority"
@@ -53,7 +51,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
 
-                android:text="priority" />
+                />
 
             <TextView
                 android:id="@+id/category"
@@ -62,7 +60,7 @@
                 android:layout_weight="1"
                 android:gravity="end"
 
-                android:text="category" />
+                 />
 
         </LinearLayout>
 
@@ -76,39 +74,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TextView" />
+                 />
 
             <TextView
                 android:id="@+id/archived"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/taskDueDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DueDate" />
+                />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
 
             <Button
                 android:id="@+id/favoriteClick"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="favorite" />
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/favorite" />
 
             <Button
                 android:id="@+id/archivedClick"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="archive" />
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/archive"
+                android:layout_marginStart="4dp"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <ImageButton
                 android:id="@+id/deleteButtonTask"

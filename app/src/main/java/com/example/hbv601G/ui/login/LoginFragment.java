@@ -1,8 +1,11 @@
 package com.example.hbv601G.ui.login;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,6 +25,7 @@ import com.example.hbv601G.R;
 import com.example.hbv601G.networking.NetworkingService;
 import com.example.hbv601G.networking.TokenManager;
 import com.example.hbv601G.services.UserService;
+import com.example.hbv601G.ui.pomodoro.Pomodoro;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
@@ -36,9 +40,18 @@ public class LoginFragment extends Fragment {
     private AuthActivity authActivity;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInctenceState){
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+
+
+
+        TextView timerDisplay = view.findViewById(R.id.timerDisplay);
+        Button startButton = view.findViewById(R.id.startButton);
+
+        new Pomodoro(requireContext(),timerDisplay, startButton);
+
 
         usernameInput = view.findViewById(R.id.usernameInput);
         passwordInput = view.findViewById(R.id.passwordInput);
@@ -92,28 +105,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-       /*
-        SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-        String savedEmail = prefs.getString("user_email", "demo");
-        String savedPassword = prefs.getString("user_password", "demho");
-        if (email.equals(savedEmail) && password.equals(savedPassword)) {
-            saveToken("token");
-            startActivity(new Intent(getActivity(), MainActivity.class));
-            getActivity().finish();
-        } else {
-            Toast.makeText(getActivity(), "Rangt notandanafn eða lykilorð", Toast.LENGTH_SHORT).show();
-        }*/
-
     }
-
-
-    private void saveToken(String token){
-        SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("jwt_token", "mock_token_123456");
-        editor.apply();
-    }
-
-
 
 }

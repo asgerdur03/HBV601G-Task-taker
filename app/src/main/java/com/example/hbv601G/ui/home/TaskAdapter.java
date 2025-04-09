@@ -175,7 +175,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            // todo: make the buttons pretty
             taskTitle = itemView.findViewById(R.id.taskTitle);
             dueDate = itemView.findViewById(R.id.taskDueDate);
             taskNote = itemView.findViewById(R.id.taskNote);

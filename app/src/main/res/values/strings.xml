@@ -17,6 +17,28 @@
 
     <!-- Button and other strings-->
     <string name="delete">Delete</string>
+    <string name="priority">Priority</string>
+    <string name="status">Status</string>
+    <string name="category">Category</string>
+    <string name="chip_today">Today</string>
+    <string name="chip_this_week">This Week</string>
+    <string name="chip_overdue">Overdue</string>
+    <string name="favorite">🤍</string>
+    <string name="archive">Archive</string>
+
+    <string name="favorites_off">☆ Favorites</string>
+    <string name="favorites_on">★ Favorites</string>
+
+    <string name="hint_category_name">Category Name</string>
+    <string name="hint_category_color">Color (e.g. #00ff00)</string>
+    <string name="button_create_category">Create Category</string>
+
+    <string name="task_title_hint">Task Title</string>
+    <string name="task_note_hint">Task Note</string>
+    <string name="due_date_hint">Due Date (YYYY-MM-DD)</string>
+    <string name="save_task_button">Save Task</string>
+    <string name="save_changes_button">Save Changes</string>
+
 
 
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -41,7 +41,12 @@
             android:layout_height="wrap_content"
             android:text="Don't have an account? Sign up" />
 
+        <include layout="@layout/pomodoro_timer"/>
+
     </LinearLayout>
+
+
+
 
 
 

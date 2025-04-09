@@ -107,8 +107,10 @@ public class HomeFragment extends Fragment {
         for (Task task : allTasks) {
             if (task.getCategory() != null && task.getCategory().getCategoryName() != null) {
                 categoryNames.add(task.getCategory().getCategoryName());
+
             }
         }
+
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -116,7 +118,7 @@ public class HomeFragment extends Fragment {
                 new ArrayList<>(categoryNames)
         );
         binding.spinnerCategory.setAdapter(categoryAdapter);
-
+        binding.spinnerCategory.setSelection(categoryAdapter.getPosition("Any"));
 
         fetchTasks();
 
@@ -167,7 +169,6 @@ public class HomeFragment extends Fragment {
 
                     Log.d("taskDebug", "size: " + tasks.size());
 
-                  // todo: skoða betur eftir pull
                     taskList = tasks;
                     taskAdapter.updateTasks(tasks);
 
