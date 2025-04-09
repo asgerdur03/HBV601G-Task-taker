@@ -1,15 +1,65 @@
 package com.example.hbv601G.entities;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.Ignore;
+import androidx.room.ColumnInfo;
+
 
 import androidx.annotation.NonNull;
 
+@Entity(tableName = "tasks")
 public class Task {
+    @PrimaryKey
+    public int id;
 
-    private long id;
+// fyrir room?
+    public String title;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String description;
+
+    public Task(int id, String title, String description, String dueDate, boolean completed, int userId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.completed = completed;
+        this.userId = userId;
+    }
+
+    public Task() {
+    }
+
+    public String dueDate;
+    public boolean completed;
+    public int userId;
+
+    // gamla :
+
     private String taskName;
     private String taskNote;
     private String status;
     private String priority;
-    private String dueDate;
+   //  private String dueDate;
     private Boolean favorite = false;
     private Boolean archived = false;
 
@@ -17,7 +67,16 @@ public class Task {
 
     // annað
 
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
+    @Ignore
     private Category category;
+    @Ignore
     private User user;
 
     public Task(String taskName, String taskNote) {
@@ -40,9 +99,9 @@ public class Task {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+   // public void setId(long id) {
+   //     this.id = id;
+   // }
 
     public String getTaskName() {
         return taskName;
