@@ -1,18 +1,28 @@
 package com.example.hbv601G.entities;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Category {
+
+    @PrimaryKey
     private long id;
+
+    @ColumnInfo(name = "categoryName")
     private String categoryName;
+    @ColumnInfo(name = "color")
     private String color;
 
     // ekki viss með eftirfarandi
-
+    @Ignore
     private User user;
+    @Ignore
     private List<Task> task = new ArrayList<>();
 
 
@@ -49,11 +59,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public String getCategoryColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setCategoryColor(String categoryColor) {
+    public void setColor(String categoryColor) {
         this.color = categoryColor;
     }
 
@@ -76,7 +86,7 @@ public class Category {
     @NonNull
     @Override
     public String toString(){
-        return "Category: " + getCategoryName() + " " + getUser().getUsername() + " " + getCategoryColor() + " " + getId();
+        return "Category: " + getCategoryName() + " " + getUser().getUsername() + " " + getColor() + " " + getId();
 
     }
 }

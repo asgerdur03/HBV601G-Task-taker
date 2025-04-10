@@ -1,22 +1,16 @@
 package com.example.hbv601G;
 
 import android.os.Bundle;
-import android.widget.Toast;
-import android.widget.PopupMenu;
-import android.view.View;
 
-import com.example.hbv601G.data.DummyGognVinnsla;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.hbv601G.databinding.ActivityMainBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +35,5 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
     }
-
 
 }

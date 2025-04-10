@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hbv601G.R;
+import com.example.hbv601G.data.AppDatabase;
 import com.example.hbv601G.databinding.FragmentCategoryBinding;
 import com.example.hbv601G.entities.Category;
 import com.example.hbv601G.networking.NetworkingService;
@@ -77,23 +79,46 @@ public class CategoryFragment extends Fragment {
                     for (JsonElement element: categoryArray){
                         Category category = new Gson().fromJson(element, Category.class);
                         parsedList.add(category);
-                        Log.d("CategoryDebug", "Added :" + category.toString());
                     }
+
+                    new Thread(() -> {
+                        AppDatabase appDatabase = AppDatabase.getInstance(requireContext());
+                        appDatabase.categoryDao().insertAll(parsedList);
+
+                    }).start();
 
                     categoryList = parsedList;
                     adapter.updateList(categoryList);
+
                 } else{
                     Log.e("CategoryDebug", "Error code: " + response.code());
+                    Toast.makeText(getContext(), "API failed, loading from local", Toast.LENGTH_SHORT).show();
+                    loadFromRoom();
+
                 }
 
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(getContext(), "Network Error, fetching from local ", Toast.LENGTH_SHORT).show();
+                loadFromRoom();
 
             }
         });
         adapter.updateList(categoryList);
+    }
+
+    private void loadFromRoom() {
+        new Thread(() -> {
+            AppDatabase appDatabase = AppDatabase.getInstance(requireContext());
+            List<Category> localCategories = appDatabase.categoryDao().getAll();
+
+            requireActivity().runOnUiThread(() -> {
+                categoryList = localCategories;
+                adapter.updateList(categoryList);
+            });
+        }).start();
     }
 
     private void deleteCategory(Category category){
@@ -106,17 +131,16 @@ public class CategoryFragment extends Fragment {
                 if (response.isSuccessful()){
                     categoryList.remove(category);
                     adapter.updateList(categoryList);
+                    Toast.makeText(getContext(), "Category deleted, if it has no tasks successfully!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.e("CategoryDebug", "Error: " + response.code());
                 }
-
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("CategoryDebug", "Error: " + t.getMessage());
-
             }
         });
 
@@ -143,9 +167,11 @@ public class CategoryFragment extends Fragment {
                     loadCategories();
                     categoryNameInput.setText("");
                     categoryColorInput.setText("");
+                    Toast.makeText(getContext(), "Category created successfully!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.e("CategoryDebug", "Failed: " + response.code());
+                    Toast.makeText(getContext(), "Failed to create cateogry", Toast.LENGTH_SHORT).show();
                 }
             }
 

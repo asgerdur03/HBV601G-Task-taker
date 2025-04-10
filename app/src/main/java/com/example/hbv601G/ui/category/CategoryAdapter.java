@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,10 +42,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         Category category = categoryList.get(position);
         holder.name.setText(category.getCategoryName());
-        holder.color.setText("Color: " + category.getCategoryColor());
+        holder.color.setText("Color: " + category.getColor());
 
         try{
-            int parsedColor = Color.parseColor(category.getCategoryColor());
+            int parsedColor = Color.parseColor(category.getColor());
             holder.cardView.setCardBackgroundColor(parsedColor);
 
         }catch (IllegalArgumentException e){

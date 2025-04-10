@@ -27,7 +27,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import androidx.activity.result.ActivityResultLauncher;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class SettingsFragment extends Fragment {
 
@@ -36,6 +44,7 @@ public class SettingsFragment extends Fragment {
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -45,6 +54,18 @@ public class SettingsFragment extends Fragment {
         logoutButton = binding.logoutButton;
         logoutButton.setOnClickListener(v -> logoutUser());
 
+        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+
+        // loada myndina frá internal storage
+        String imagePath = prefs.getString("profile_image_path", null);
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                binding.profileImageView.setImageBitmap(bitmap);
+            }
+        }
+
+
         binding.uploadProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/*");
@@ -52,27 +73,14 @@ public class SettingsFragment extends Fragment {
         });
 
         binding.removePictureButton.setOnClickListener(v -> {
-            SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("profile_image_uri");
+            editor.remove("profile_image_path");
             editor.apply();
 
             // Reset image to default placeholder
             binding.profileImageView.setImageResource(R.drawable.baseline_person_24);
             Toast.makeText(getContext(), "Mynd fjarlægð", Toast.LENGTH_SHORT).show();
         });
-
-        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-
-        String savedImageUri = prefs.getString("profile_image_uri", null);
-        if (savedImageUri != null) {
-            binding.profileImageView.setImageURI(Uri.parse(savedImageUri));
-        }
-
-
-        String currentUsername = prefs.getString("user_email", "");
-        String currentPassword = prefs.getString("user_password", "");
-
 
 
         binding.updateButton.setOnClickListener(v -> {
@@ -85,6 +93,7 @@ public class SettingsFragment extends Fragment {
             userService.update(newUsername, email, newPassword).enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+
                     if (response.isSuccessful()) {
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString("user_email", email);
@@ -117,10 +126,27 @@ public class SettingsFragment extends Fragment {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
 
-                        binding.profileImageView.setImageURI(selectedImageUri);
+                        try {
+                            InputStream inputStream = requireContext().getContentResolver().openInputStream(selectedImageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            inputStream.close();
 
-                        SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-                        prefs.edit().putString("profile_image_uri", selectedImageUri.toString()).apply();
+                            binding.profileImageView.setImageBitmap(bitmap);
+
+                            // vista myndina í internal storage
+                            File file = new File(requireContext().getFilesDir(), "profile_image.jpg");
+                            FileOutputStream fos = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                            fos.close();
+
+                            SharedPreferences prefs = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                            prefs.edit().putString("profile_image_path", selectedImageUri.toString()).apply();
+                            Toast.makeText(requireContext(), "Mynd vistuð!", Toast.LENGTH_SHORT).show();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(requireContext(), "Villa við mynd", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 }

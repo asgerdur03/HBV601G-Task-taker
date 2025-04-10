@@ -86,7 +86,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.category.setText(task.getCategory().getCategoryName());
 
             try {
-                int parsedColor = Color.parseColor(task.getCategory().getCategoryColor());
+                int parsedColor = Color.parseColor(task.getCategory().getColor());
                 holder.cardView.setCardBackgroundColor(parsedColor);
             } catch (IllegalArgumentException e) {
                 holder.cardView.setCardBackgroundColor(Color.LTGRAY);

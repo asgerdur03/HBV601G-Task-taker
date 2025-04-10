@@ -1,5 +1,4 @@
 package com.example.hbv601G.ui.home;
-import static android.text.format.DateUtils.isToday;
 
 import com.example.hbv601G.R;
 import android.os.Bundle;
@@ -8,21 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Toast;
-
 import android.widget.Spinner;
 import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.hbv601G.data.AppDatabase;
 import com.example.hbv601G.databinding.FragmentHomeBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.example.hbv601G.data.DummyGognVinnsla;
+
+import com.example.hbv601G.entities.Category;
 import com.example.hbv601G.entities.Task;
 import com.example.hbv601G.networking.NetworkingService;
 import com.example.hbv601G.services.TaskService;
-import com.example.hbv601G.ui.tasks.TaskDetailFragment;
 import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -65,12 +63,8 @@ public class HomeFragment extends Fragment {
 
         recyclerView = binding.recyclerViewTasks;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         taskAdapter = new TaskAdapter(taskList, task -> deleteTask(task), service);
-
         recyclerView.setAdapter(taskAdapter);
-
-
 
         ChipGroup chipGroupDueDate = binding.chipGroupDueDate;
         ToggleButton toggleFavorites = binding.toggleFavorites;
@@ -97,28 +91,32 @@ public class HomeFragment extends Fragment {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                Arrays.asList("Any", "Pending", "Completed", "In Progress", "Cancelled")
+                Arrays.asList("Any", "Pending", "Completed", "In_Progress", "Cancelled")
         );
         binding.spinnerStatus.setAdapter(statusAdapter);
 
-        Set<String> categoryNames = new HashSet<>();
-        categoryNames.add("Any");
+        AppDatabase db = AppDatabase.getInstance(requireContext());
 
-        for (Task task : allTasks) {
-            if (task.getCategory() != null && task.getCategory().getCategoryName() != null) {
-                categoryNames.add(task.getCategory().getCategoryName());
+        new Thread(() -> {
+            List<Category> localCategories = db.categoryDao().getAll();
 
+            List<String> categoryNames = new ArrayList<>();
+            categoryNames.add("Any");
+            for (Category category : localCategories) {
+                categoryNames.add(category.getCategoryName());
             }
-        }
 
+            requireActivity().runOnUiThread(() -> {
+                ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
+                        requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        categoryNames
+                );
+                binding.spinnerCategory.setAdapter(categoryAdapter);
+                binding.spinnerCategory.setSelection(categoryAdapter.getPosition("Any"));
+            });
+        }).start();
 
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                new ArrayList<>(categoryNames)
-        );
-        binding.spinnerCategory.setAdapter(categoryAdapter);
-        binding.spinnerCategory.setSelection(categoryAdapter.getPosition("Any"));
 
         fetchTasks();
 

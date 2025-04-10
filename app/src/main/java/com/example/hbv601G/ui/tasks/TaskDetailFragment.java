@@ -115,7 +115,8 @@ public class TaskDetailFragment extends Fragment {
                             oldCategoryId = task.get("category").getAsJsonObject().get("id").getAsLong();
                         }
 
-                        setupSpinner(editStatusSpinner, new String[]{"TODO", "IN_PROGRESS", "DONE"}, oldStatus, value -> oldStatus = value);
+                        setupSpinner(editStatusSpinner, new String[]{"" +
+                                "PENDING", "COMPLETED", "IN_PROGRESS", "CANCELLED"}, oldStatus, value -> oldStatus = value);
                         setupSpinner(editPrioritySpinner, new String[]{"LOW", "MEDIUM", "HIGH"}, oldPriority, value -> oldPriority = value);
 
                         categoryService.getCategories().enqueue(new Callback<JsonObject>() {
