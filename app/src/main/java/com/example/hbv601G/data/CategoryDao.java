@@ -1,6 +1,7 @@
 package com.example.hbv601G.data;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -21,6 +22,10 @@ public interface CategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Category> categories);
+
+    @Query("DELETE FROM Category")
+    void deleteAll();
+
 
 
 

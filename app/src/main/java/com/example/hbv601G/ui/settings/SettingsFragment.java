@@ -18,8 +18,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.hbv601G.AuthActivity;
 import com.example.hbv601G.R;
+import com.example.hbv601G.data.AppDatabase;
 import com.example.hbv601G.databinding.FragmentSettingsBinding;
 import com.example.hbv601G.networking.NetworkingService;
+import com.example.hbv601G.networking.TokenManager;
 import com.example.hbv601G.services.UserService;
 import com.google.gson.JsonObject;
 
@@ -158,6 +160,14 @@ public class SettingsFragment extends Fragment {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("jwt_token");
         editor.apply();
+
+        TokenManager tokenManager = new TokenManager(requireContext());
+        tokenManager.clearToken();
+
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(requireContext());
+            db.categoryDao().deleteAll();
+        }).start();
 
         Intent intent = new Intent(getActivity(), AuthActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

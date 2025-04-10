@@ -4,16 +4,44 @@
 - Hermann Ingi
 - Vilborg
 
-## Todo
+## Info fyrir demo
 
-- Prófa ALLAR aðgerðir, finna bugs in the edge cases, svo að forrit crashi ekki (við framkvæmum ekki buggy shit) í kynningu
-- Gera glærukynningu (5 mín)
-- Pakka öllu upp fyrir skil í egv (zip file?) og skila og ekki hugsa um hugbó aftur
+```
+# New user
 
-# Task Taker Android app
+username: new
+email: new@new.com
+password: new
+
+# Hér sýni ég:
+- Pomodoro
+- Signup
+- Create og delete 
+- Profile pic
+- Update user info
+
+# Existing user
+
+username: demo
+password: demo
+
+# Hér sýni ég 
+- Filters
+- Edit task
+- Like/archive
+- Offline dæmi
+
+```
+
+
+## Fyrir demo todo:
 
 Final project in HBV601G - Software project 2
 
+## Test notes/bugs
+
+- Til að category loadist á filter þarf að vera búin að fara á category fragment 
+- eftir edit username, fattar api ekki að þetta sé sami user, fix: loggout við chnage, setja toas um að logga afut inn
 
 
 
